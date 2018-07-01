@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>営業統計レポート</title>
+<style type="text/css">
+*{
+font:normal 12px;
+}
+table{
+border-collapse:collapse;
+border:1px solid #000;
+}
+tr{
+height:27px;
+}
+.bold{
+font-weight:bold;
+}
+</style>
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="3">
+  <tr>
+   <td colspan="4" style="font:bold 25px;text-align:center;text-spacing:20px;">
+   <?php echo $report_title; ?>   </td>
+  </tr>
+  <tr>
+    <td colspan="2">統計時間：<?php echo $sday?>ー<?php echo $eday?> </td>
+    <td colspan="2">現在時間：<?php echo GetDatetimeMK(time())?> </td>
+  </tr>
+  <tr>
+    <td colspan="4" class="bold" style="border-bottom:1px solid #000">購買状況</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>購買表の数：<?php echo $total_d;?></td>
+    <td>返品表の数：<?php echo $total_b;?></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>購買の数：<?php echo $totalnumber_in;?></td>
+    <td>購買金額：￥<?php echo number_format($totalmoney_in,2,'.',',');?></td>
+    <td>返品の数：<?php echo $totalnumber_back;?></td>
+    <td>返品金額：￥<?php echo number_format($totalmoney_back,2,'.',',');?></td>
+  </tr>
+  <tr>
+    <td>合計</td>
+    <td>数量合計：<?php echo ($totalnumber_in-$totalnumber_back);?></td>
+    <td>金額合計：￥<?php echo number_format(($totalmoney_in-$totalmoney_back),2,'.',',');?></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="4" class="bold" style="border-bottom:1px solid #000">販売状況</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>販売表の数：<?php echo $total_s?></td>
+    <td>返品表の数：<?php echo $total_sb?></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>販売の数：<?php echo $totalnumber_s;?></td>
+    <td>販売金額：￥<?php echo number_format($totalmoney_s,2,'.',',');?></td>
+    <td>返品の数：<?php echo $totalnumber_s;?></td>
+    <td>返品金額：￥<?php echo number_format($totalmoney_sb,2,'.',',');?></td>
+  </tr>
+  <tr>
+    <td>合計</td>
+    <td>数量合計：<?php echo ($totalnumber_s-$totalnumber_sb);?></td>
+    <td>金額合計：￥<?php echo number_format(($totalmoney_s-$totalmoney_sb),2,'.',',');?></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="4" class="bold" style="border-bottom:1px solid #000">在庫移動状況</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>移動の数</td>
+    <td>転入数量：</td>
+    <td>転出数量：</td>
+  </tr>
+  <tr>
+    <td class="bold">在庫状況</td>
+    <td>在庫数合計：<?php echo $totalnumber_kc;?></td>
+    <td>在庫金額合計：￥<?php echo number_format($totalmoney_kc,2,'.',',');?></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="bold">財務分析</td>
+    <td>原価：￥<?php echo number_format(($totalmoney_cb-$totalmoney_sb_cb),2,'.',',');?></td>
+    <td>利益：￥<?php echo number_format(($totalmoney_s-$totalmoney_sb)-($totalmoney_cb-$totalmoney_sb_cb),2,'.',',');?></td>
+    <td>粗利率：<?php echo number_format((($totalmoney_s-$totalmoney_sb)-($totalmoney_cb-$totalmoney_sb_cb))/($totalmoney_s-$totalmoney_sb)*100,2,'.',',');?>%</td>
+  </tr>  
+</table>
+
+</body>
+</html>

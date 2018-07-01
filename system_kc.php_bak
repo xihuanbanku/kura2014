@@ -1,0 +1,407 @@
+<?php
+require(dirname(__FILE__)."/include/config_base.php");
+require(dirname(__FILE__)."/include/config_rglobals.php");
+require(dirname(__FILE__)."/include/page.php");
+require_once(dirname(__FILE__)."/include/checklogin.php");
+check_grant('system_kc.php',GetCookie('rank'));
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="style/main.css" rel="stylesheet" type="text/css" />
+<script language="javascript" src="include/calendar.js"></script>
+<script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
+<title><?php echo $cfg_softname;?>在庫</title>
+<script language = "JavaScript">
+var onecount; 
+onecount = 0; 
+subcat = new Array();
+<?php
+$count=0;
+$rsql=New Dedesql(false);
+$rsql->SetQuery("select * from #@__categories where reid!=0");
+$rsql->Execute();
+while($rs=$rsql->GetArray()){
+?>
+subcat[<?php echo $count;?>] = new Array("<?php echo $rs['categories'];?>","<?php echo $rs['reid'];?>","<?php echo $rs['id'];?>");
+<?php 
+    $count++;
+}
+$rsql->close();
+?>
+onecount=<?php echo $count?>; 
+function getCity(locationid) 
+{ 
+    document.form1.cp_categories_down.length = 0; 
+
+    var locationid=locationid; 
+
+    var i; 
+    document.form1.cp_categories_down.options[0] = new Option('小分類選択',''); 
+    for (i=0;i < onecount; i++) 
+    { 
+        if (subcat[i][1] == locationid) 
+        { 
+        document.form1.cp_categories_down.options[document.form1.cp_categories_down.length] = new Option(subcat[i][0], subcat[i][2]);
+        } 
+    } 
+
+} 
+function out_excel(shop){
+    cp=document.forms[0].cp_categories.value;
+    cp_down=document.forms[0].cp_categories_down.value;
+    s=document.forms[0].sort.value;
+    st=document.forms[0].stext.value;
+    sdate = document.getElementById("sdate").value;
+    edate = document.getElementById("edate").value;
+    strChk = document.getElementById("strChk").value;
+    labid = document.forms[0].labid.value;
+    
+    if (sdate !== '' && edate !== '') {
+        if (Date.parse(sdate) > Date.parse(edate)) {
+            alert('正しい日付範囲を選択してください。');
+            return false;
+        }
+    }
+    
+    //window.open('excel_kc.php?shop='+shop+'&cp_categories='+cp+'&cp_categories_down='+cp_down+'&sort='+s+'&stext='+st,'','');
+    window.open('excel_kc.php?action=download&shop='+shop+'&cp_sdate='+sdate+'&cp_edate='+edate+'&strChk='+strChk+'&labid='+labid+'&cp_categories='+cp+'&cp_categories_down='+cp_down+'&sort='+s+'&stext='+st,'','');
+}
+function skiplab(lid){
+	if(!lid==''){
+        window.location.href='system_kc.php?lid='+lid;
+		}
+}
+function submitChk(kid,pid) {
+        var flag = confirm ( "削除したら復元できないので、本当に削除しますか。");
+        if (flag) {
+            location.href = "system_kc_del.php?action=del&id="+kid+"&pid="+pid;
+        }
+        return flag;
+}
+function setChk(objChk) {
+    strChk = document.getElementById("strChk");
+    if (objChk.checked) {
+        if (strChk.value !== '' && strChk.value !== '0') {
+            strChk.value = strChk.value + ",'" + objChk.value + "'";
+        } else {
+            strChk.value = "'" + objChk.value + "'";
+        }
+    } else {
+        strChkVal = strChk.value;
+        strChkSize = strChkVal.split(",");
+        if (strChkSize.length > 1) {
+            strChkVal = strChkVal.replace(",'" + objChk.value + "'", "");
+            strChkVal = strChkVal.replace("'" + objChk.value + "',", "");
+        } else {
+            strChkVal = "";
+        }
+        strChk.value = strChkVal;
+    }
+}
+
+    function chkAll() {
+        var frm=document.sel;
+        var chkall = frm.hogeAll;
+        var strChk = document.getElementById("strChk");
+        if (chkall.checked) {
+            for(var i=0; i<frm.length; i++) {
+                frm.elements[i].checked = true;
+                if (strChk.value !== '' && strChk.value !== '0') {
+                    strChk.value = strChk.value + ",'" + frm.elements[i].value + "'";
+                } else {
+                    strChk.value = "'" + frm.elements[i].value + "'";
+                }
+            }
+        } else {
+            for(var i=0; i<frm.length; i++) {
+                frm.elements[i].checked = false;
+            }
+            strChk.value = "";
+        }
+//        for(var i=0; i<frm.length; i++) {
+//            if(frm.elements[i].type === "checkbox"){
+//                frm.elements[i].checked = chkall.checked;
+//                if (strChk.value !== '' && strChk.value !== '0') {
+//                    strChk.value = strChk.value + ",'" + frm.elements[i].value + "'";
+//                } else {
+//                    strChk.value = "'" + frm.elements[i].value + "'";
+//                }
+//            }
+//        }
+    }
+</script>
+</head>
+<body>
+<table width="100%" border="0" id="table_style_all" cellpadding="0" cellspacing="0">
+  <tr>
+    <td id="table_style" class="l_t">&nbsp;</td>
+    <td>&nbsp;</td>
+    <td id="table_style" class="r_t">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>
+	<table width="100%" border="0" cellpadding="0" cellspacing="2">
+     <tr>
+      <td>
+	   <table width="100%" border="0" cellspacing="0">
+	   <form action="system_kc.php?action=seek" name="form1" method="post">
+	    <tr height="22" bgcolor="#FFFFFF">
+		 <td style="text-align:right;font-weight:bold;" colspan="2">
+		 <?php
+		 $ksql=New Dedesql(false);
+		 $query="select * from #@__mainkc";
+		 $ksql->setquery($query);
+		 $ksql->execute();
+		 $allrow=$ksql->gettotalrow();
+		 while($row=$ksql->getarray()){
+		 $allnumber+=$row['number'];
+// 		 $thisjj=$ksql->getone("select * from #@__basic where cp_number='".$row['p_id']."'");
+// 		 $themoney+=$thisjj['cp_jj']*$row['number'];
+		 }
+		 $ksql->close();
+		 ?>
+		 &nbsp;倉庫統計: <font color=red><?php echo $allrow;?></font> 個 <font color=red><?php echo $allnumber;?></font> 件、合計 <font color=red>￥<?php echo number_format($themoney,2,'.',',')?></font>&nbsp;&nbsp;&nbsp;&nbsp;
+		 </td>
+		</tr>
+	    <tr height="30">
+		 <td>
+	  <strong>&nbsp;在庫一覧</strong>
+	     </td>
+		 <td align="right">
+		 倉庫：
+<?php 
+$gsql=New Dedesql(false);
+$labQuery="select * from #@__lab";
+$gsql->setquery($labQuery);
+$gsql->execute();
+$rowcount=$gsql->gettotalrow();
+if($rowcount>0){
+ echo "<select name='labid' onchange='skiplab(this.value)'>\r\n<option value=''>全部倉庫</option>";
+ while ($row=$gsql->getarray()){
+ 	if($lid=='')
+ 	 if($labid==$row['id'])
+ 		echo "<option value='".$row['id']."' selected>".$row['l_name']."</option>";
+ 		else 
+ 		echo "<option value='".$row['id']."'>".$row['l_name']."</option>";
+ 	elseif($lid==$row['id'])
+   echo "<option value='".$row['id']."' selected>".$row['l_name']."</option>";
+ 	else
+   echo "<option value='".$row['id']."'>".$row['l_name']."</option>";
+  }
+   echo "</select>";
+   }
+   else
+   {
+   echo "<select name='labid'>\r\n<option value=''>全部倉庫</option></select>";
+   }
+  $gsql->close();
+		 ?>
+		 分類：
+		 <?php
+		 if ($action=='seek')
+		 getcategories1($cp_categories,$cp_categories_down);
+		 else
+                 getcategories1(0,'');
+	     ?>
+		 <select name="sort">
+                 <option value="1">商品コード検索</option>
+		 <option value="2">ﾊﾞｰｺｰﾄﾞ検索</option>
+                 <option value="3" selected>商品詳細検索</option>
+		 <option value="4">ｷｰﾜｰﾄﾞ検索</option>
+		 </select>
+                 <input type="text" name="stext" size="15" VALUE="<?PHP ECHO $stext ?>">&nbsp;<input type="submit" value="検索">
+		 &nbsp;&nbsp;
+		 </td>
+		</tr></form>
+	   </table>
+	  </td>
+     </tr>
+	 <form method="post" name="sel">
+     <tr>
+      <td bgcolor="#FFFFFF">
+       <?php
+       $stext = delSpace($stext);
+       echo "<table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" id=\"table_border\">";
+	   if($action=='seek'){
+	   //if($cp_categories_down=='')echo "<script>alert('小分類を選択してください');history.go(-1);</script>";
+	   $labstring="";
+	   if($labid!='') {
+	       $labstring=" and #@__mainkc.l_id='$labid'";
+	   }
+	   switch($sort){
+	    case "1":
+    		    if($cp_categories !='' and $cp_categories_down != '') {
+                    $query="select * from #@__mainkc,#@__basic where  #@__basic.cp_number LIKE '%".$stext."%' and #@__basic.cp_categories='$cp_categories' and #@__basic.cp_categories_down='$cp_categories_down' and #@__mainkc.p_id=#@__basic.cp_number".$labstring;
+                } elseif ($cp_categories !='' and $cp_categories_down == '') {
+                    $query="select * from #@__mainkc,#@__basic where  #@__basic.cp_number LIKE '%".$stext."%' and #@__basic.cp_categories='$cp_categories' and #@__mainkc.p_id=#@__basic.cp_number".$labstring;
+                } else {
+                    $query="select * from #@__mainkc,#@__basic where  #@__basic.cp_number LIKE '%".$stext."%' and #@__mainkc.p_id=#@__basic.cp_number".$labstring;
+                }
+                break;
+        case "2":
+                if($cp_categories !='' and $cp_categories_down != '') {
+                    $query="select * from #@__mainkc,#@__basic where  #@__basic.cp_tm LIKE '%".$stext."%' and #@__basic.cp_categories='$cp_categories' and #@__basic.cp_categories_down='$cp_categories_down' and #@__mainkc.p_id=#@__basic.cp_number".$labstring;
+                } elseif ($cp_categories !='' and $cp_categories_down == '') {
+                    $query="select * from #@__mainkc,#@__basic where  #@__basic.cp_tm LIKE '%".$stext."%' and #@__basic.cp_categories='$cp_categories' and #@__mainkc.p_id=#@__basic.cp_number".$labstring;
+                } else {
+                    $query="select * from #@__mainkc,#@__basic where  #@__basic.cp_tm LIKE '%".$stext."%' and #@__mainkc.p_id=#@__basic.cp_number".$labstring;
+                }
+		        break;
+        case "3":
+                if($cp_categories !='' and $cp_categories_down != '') {
+                    $query="select * from #@__mainkc,#@__basic where  (#@__basic.cp_detail LIKE '%".$stext."%' or #@__basic.cp_title LIKE '%".$stext."%' or #@__basic.cp_number LIKE '%".$stext."%') and #@__basic.cp_categories='$cp_categories' and #@__basic.cp_categories_down='$cp_categories_down' and #@__mainkc.p_id=#@__basic.cp_number".$labstring;
+                } elseif ($cp_categories !='' and $cp_categories_down == '') {
+                    $query="select * from #@__mainkc,#@__basic where  (#@__basic.cp_detail LIKE '%".$stext."%' or #@__basic.cp_title LIKE '%".$stext."%' or #@__basic.cp_number LIKE '%".$stext."%') and #@__basic.cp_categories='$cp_categories' and #@__mainkc.p_id=#@__basic.cp_number".$labstring;
+                } else {
+                    $query="select * from #@__mainkc,#@__basic where  (#@__basic.cp_detail LIKE '%".$stext."%' or #@__basic.cp_title LIKE '%".$stext."%' or #@__basic.cp_number LIKE '%".$stext."%') and #@__mainkc.p_id=#@__basic.cp_number".$labstring;
+                }
+		break;
+            case "4":
+                if($cp_categories !='' and $cp_categories_down != '') {
+                    $query="select * from #@__mainkc,#@__basic where  #@__basic.cp_helpword LIKE '%".$stext."%' and #@__basic.cp_categories='$cp_categories' and #@__basic.cp_categories_down='$cp_categories_down' and #@__mainkc.p_id=#@__basic.cp_number".$labstring;
+                } elseif ($cp_categories !='' and $cp_categories_down == '') {
+                    $query="select * from #@__mainkc,#@__basic where  #@__basic.cp_helpword LIKE '%".$stext."%' and #@__basic.cp_categories='$cp_categories' and #@__mainkc.p_id=#@__basic.cp_number".$labstring;
+                } else {
+                    $query="select * from #@__mainkc,#@__basic where  #@__basic.cp_helpword LIKE '%".$stext."%' and #@__mainkc.p_id=#@__basic.cp_number".$labstring;
+                }
+		break;
+            }
+        } elseif($lid=='')
+            $query="select * from #@__mainkc,#@__basic where #@__mainkc.p_id=#@__basic.cp_number".$labstring;
+        else 
+            $query="select * from #@__mainkc,#@__basic where #@__mainkc.p_id=#@__basic.cp_number and #@__mainkc.l_id='$lid'";
+// 	   echo $query;
+// 	   exit();
+$csql=New Dedesql(false);
+$dlist = new DataList();
+$dlist->pageSize = $cfg_record;
+
+if($action=='seek'){
+$dlist->SetParameter("action",$action);
+$dlist->SetParameter("cp_categories",$cp_categories);
+$dlist->SetParameter("cp_categories_down",$cp_categories_down);
+$dlist->SetParameter("sort",$sort);
+$dlist->SetParameter("stext",$stext);
+$dlist->SetParameter("labid",$labid);
+}
+$dlist->SetParameter("lid",$lid);
+
+if (is_null($sorting)) {
+    $query .= " order by cp_number desc ";
+} else {
+    if ($sortkbn == "1") {
+        $query .= " order by cp_number ".$sorting." ";
+    } elseif ($sortkbn == "8") {
+        $query .= " order by number ".$sorting." ";
+    }
+}
+$dlist->SetSource($query);
+	   echo "<tr class='row_color_head'>
+           <td><input type='checkbox' name='hogeAll' onClick=\"chkAll()\">選択&nbsp;&nbsp;</td>";
+           $href = "system_kc.php?sorting=";
+           $arrow = "▼";
+           if (is_null($sorting)) {
+               $href .= "asc";
+           } else {
+               if ($sorting == "asc") {
+                   $href .= "desc";
+                   $arrow = "▲";
+               } else {
+                   $href .= "asc";
+               }
+           }
+           if (!is_null($action)) {
+               $href .= "&action=seek";
+           }
+           if (!is_null($cp_categories)) {
+               $href .= "&cp_categories=".$cp_categories;
+           }
+           if (!is_null($cp_categories_down)) {
+               $href .= "&cp_categories_down=".$cp_categories_down;
+           }
+           if (!is_null($sort)) {
+               $href .= "&sort=".$sort;
+           }
+           if (!is_null($stext)) {
+               $href .= "&stext=".$stext;
+           }
+           if (!is_null($labid)) {
+               $href .= "&labid=".$labid;
+           } else if (!is_null($lid)) {
+               $href .= "&lid=".$lid;
+           }
+           echo "<td><a href='".$href."&sortkbn=1'><b>商品コード&nbsp;".$arrow."</b></a></td>
+	   <td>メーカ・商品名</td>
+	   <td>タイトル</td>
+           <td>商品入庫日</td>
+	   <td>倉庫</td>
+	   <td>在庫位置<br>階 - 棚 - ゾーン - 横 - 縦</td>
+           <td>販売価格</td>
+           <td><a href='".$href."&sortkbn=8'><b>在庫数&nbsp;".$arrow."</b></a></td>
+	   </tr>";
+	   $mylist = $dlist->GetDataList();
+       while($row = $mylist->GetArray('dm')){
+           if ($row['l_id'] == "1") {
+               echo "<tr onMouseMove=\"javascript:this.bgColor='#EBF1F6';\" onMouseOut=\"javascript:this.bgColor='#FFFFFF';\">\r\n";
+           } elseif ($row['l_id'] == "2") {
+               echo "<tr bgcolor=\"#FFE4B5\" onMouseMove=\"javascript:this.bgColor='#EBF1F6';\" onMouseOut=\"javascript:this.bgColor='#FFE4B5';\">\r\n";
+           }
+           echo "<td><input type='checkbox' name='hoge' onClick=\"setChk(this)\" value='".$row['p_id']."'><a href='system_kc_edit.php?id=".$row['kid']."&lid=".$row['l_id']."&n=".$row['number']."&pid=".$row['cp_number'].
+                "&floor=".$row['l_floor']."&shelf=".$row['l_shelf']."&zone=".$row['l_zone']."&horizontal=".$row['l_horizontal']."&vertical=".$row['l_vertical']."&labid=".$labid."&cp_categories=".$cp_categories.
+                "&cp_categories_down=".$cp_categories_down."&sort=".$sort."&stext=".$stext."&sorting=".$sorting."&action=".$action."&sortkbn=".$sortkbn.
+                "'>修正</a>|<a href='#' onClick=\"submitChk(".$row['kid'].",'".$row['p_id']."')\">削除</a></td>
+	   <td>&nbsp;<a style=\"text-decoration:underline\" href='system_basic_refer.php?id=".$row['p_id']."&labid=".$labid."&cp_categories=".$cp_categories.
+                "&cp_categories_down=".$cp_categories_down."&sort=".$sort."&stext=".$stext."&sorting=".$sorting."&action=".$action."&sortkbn=".$sortkbn."'>".$row['p_id']."</a></td>
+           <td width=\"10%\">&nbsp;".$row['cp_name']."&nbsp;&nbsp;&nbsp;</td>
+	   <td width=\"35%\">".$row['cp_title']."</td>
+           <td><center>&nbsp;".ChangeDateTime($row['dtime'])."</td>
+           <td><center><b>&nbsp;".get_name($row['l_id'],'lab')."</b></td>
+           <td><center>".$row['l_floor']."-".$row['l_shelf']."-".$row['l_zone']."-".$row['l_horizontal']."-".$row['l_vertical']."</td>
+	   <td align=\"right\"><font color=blue>&yen;&nbsp;".number_format($row['cp_sale1'])."</font>&nbsp;&nbsp;</td>
+           <td align=\"right\"><font color=red>".$row['number']."</font>&nbsp;&nbsp;</td>
+	   \r\n</tr>";
+	   }
+	   echo "<tr><td colspan='9'>&nbsp;".$dlist->GetPageList($cfg_record)."</td></tr>";
+	   echo "</table>";
+	   $csql->close();
+	   ?>
+	  </td>
+         
+     </tr>
+     <tr>
+            <td align="right">商品入庫日：
+		 <?php 
+//		 if($action=='seek')
+//		 echo "<input type=\"text\" name=\"cp_sdate\" size=\"15\" VALUE=\"".$cp_sdate."\" class=\"Wdate\" onClick=\"WdatePicker()\"> &ndash; 
+//		 <input type=\"text\" name=\"cp_edate\" size=\"15\" VALUE=\"".$cp_edate."\" class=\"Wdate\" onClick=\"WdatePicker()\">";
+//		 else
+//		 echo "<input type=\"text\" name=\"cp_sdate\" size=\"15\" VALUE=\"\" class=\"Wdate\" onClick=\"WdatePicker()\"> &ndash; 
+//		 <input type=\"text\" name=\"cp_edate\" size=\"15\" VALUE=\"\" class=\"Wdate\" onClick=\"WdatePicker()\">";
+		 ?>
+                <input type="hidden" name="strChk" id="strChk"/>
+                <input type="text" name="sdate" id="sdate" size="15" value="" class="Wdate" onclick="WdatePicker()"/> &ndash; 
+                <input type="text" name="edate" id="edate" size="15" value="" class="Wdate" onclick="WdatePicker()"/>
+                &nbsp;
+            <input type="button" onclick="out_excel('rakuten')" value="楽天データ出力" />
+            <input type="button" onclick="out_excel('amazon')" value="Amazonデータ出力" />
+         <!--   <input type="button" onclick="out_excel('b2c')" value="B2Cデータ出力" />-->
+            <input type="button" onclick="out_excel('zone')" value="在庫位置データ出力" />
+            </td>
+        </tr>
+    </form>
+    </table>
+	</td>
+    
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+      <td id="table_style" class="l_b">&nbsp;</td>
+    <td>&nbsp;</td>
+    <td id="table_style" class="r_b">&nbsp;</td>
+  </tr>
+</table>
+</body>
+</html>

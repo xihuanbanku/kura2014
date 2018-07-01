@@ -1,0 +1,102 @@
+/* #pager  */
+ul.pages {
+	display: block;
+	border: none;
+	text-transform: uppercase;
+	font-size: 12px;
+	margin: 0px 0 0px 0px;
+	padding-top: 15px;
+	background: white;
+	float:right;
+	height:35px;
+}
+
+/* #pager */ 
+ul.pages li {
+	list-style: none;
+	float: left;
+	border:none;
+	/* text-decoration: underline; */
+	margin: 0 5px 0 0;
+	padding: 0px;
+	text-align: center;
+	color: #444444;
+}
+
+/* #pager */ 
+ul.pages li:hover {
+	border: none;
+	text-decoration: underline;
+	/* color: #6A8A01; */
+}
+
+/* #pager */ 
+ul.pages li.pgEmpty {
+	border: none;
+	text-decoration: none;
+	color: #CCCCCC;
+}
+
+/* #pager */ 
+ul.pages li.pgCurrent {
+	border: none;
+	color: #99CC00;
+	font-weight: 700;
+}
+
+/* #pager  */
+ul.pages li.page-number {
+	width: 13px;
+}
+
+/* #pager  */
+ul.pages li.pgNext {
+	width: 40px;
+}
+
+
+/**extend***/
+/* #pager  */
+ul.pages li.curpage{
+	border: none;
+	text-decoration: none;
+	color: #444444;
+}
+/* #pager  */
+ul.pages li.curpagetext {
+	color: #99CC00;
+	text-decoration: none;
+}
+
+.pagination {
+            font-size: 100%;
+        }
+        
+.pagination a {
+    text-decoration: none;
+	border: solid 1px #C09531;
+	color: #A17B20;
+}
+
+.pagination a, .pagination span {
+    padding: 0.2em 0.3em;
+    margin-right: 5px;
+	margin-bottom: 5px;
+	min-width:1em;
+	text-align:center;
+}
+
+.pagination .current {
+    background: #888;
+    color: #000000;
+	border: solid 1px #AAE;
+}
+
+.pagination .current.prev, .pagination .current.next{
+	color:#999;
+	border-color:#999;
+	background:#777;
+}
+#totalPage{
+	display: inline;
+}
