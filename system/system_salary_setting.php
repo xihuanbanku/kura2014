@@ -154,19 +154,29 @@ function initGrant() {
                             }
                         });
                     } else if(i%6 ==1) {//保存
-                        $.ajax({
-                            type: "post",
-                            url: url,
-                            data: "flag=update&all=0&"+$(item).parent().parent().find("input").serialize()+"&user="+$("#users").val(),
-                            success: function(data){
-                                if(data > 0) {
-                                    alert("成功");
-                                    initGrant();
-                                } else {
-                                    alert("失败");
-                                }
+                        var click = true;
+                        $(item).parent().parent().find("input").each(function(i, entry){
+                            if($(entry).attr("disabled") == "disabled") {
+                                alert("请先点击修改");
+                                click = false;
+                                return false;
                             }
                         });
+                        if(click) {
+                            $.ajax({
+                                type: "post",
+                                url: url,
+                                data: "flag=update&all=0&"+$(item).parent().parent().find("input").serialize()+"&user="+$("#users").val(),
+                                success: function(data){
+                                    if(data > 0) {
+                                        alert("成功");
+                                        initGrant();
+                                    } else {
+                                        alert("失败");
+                                    }
+                                }
+                            });
+                        }
                     } else if(i%6 ==2) {//删除
                         if($(item).parent().parent().find("input[name=p_name]").val() == "出勤时间" 
                             || $(item).parent().parent().find("input[name=p_name]").val() == "退勤时间"
