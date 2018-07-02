@@ -147,6 +147,12 @@ session_start();
                     and p_name = '当月有給使用日数'";
         $newsql->get_results($query);
 
+        //按照顺序计算所有的公式
+        $query = "select id, p_func from jxc_salary_config where del_flag <> 1 and user_id={$user} and func_order > 0 order by func_order ";
+        $results = $newsql->get_results($query);
+        foreach ($results as $inputFunc) {
+            caculateInput(" ".$inputFunc->p_func." ", $user, $inputFunc->id);
+        }
         $query = "select * from jxc_salary_config where del_flag <> 1 and user_id={$user} order by  p_type, sort ";
         $results = $newsql->get_results($query);
 		return json_encode($results, JSON_FORCE_OBJECT);
@@ -252,13 +258,15 @@ session_start();
         $sort      =$_REQUEST["sort"];
         $p_name    =$_REQUEST["p_name"];
         $p_value   =$_REQUEST["p_value"];
+        $inputFunc   =$_REQUEST["p_func"];
+        $func_order   =$_REQUEST["func_order"];
         $p_type   =$_REQUEST["p_type"];
         $user      =$_REQUEST["user"];
         if(isset($_REQUEST["del_flag"])) {
             $del_flag      =$_REQUEST["del_flag"];
             $newsql = new ezSQL_mysql();
-            $query = "INSERT INTO `jxc_salary_config` (`p_type`, `p_name`, `p_value`, `sort`, del_flag, `user_id`)
-                select '{$p_type}', '{$p_name}', '{$p_value}', '{$sort}', '{$del_flag}', id from jxc_staff";
+            $query = "INSERT INTO `jxc_salary_config` (`p_type`, `p_name`, `p_value`, p_func, func_order, `sort`, del_flag, `user_id`)
+                select '{$p_type}', '{$p_name}', '{$p_value}', '{$inputFunc}', '{$func_order}', '{$sort}', '{$del_flag}', id from jxc_staff";
             return $newsql->query($query);
         }
         return 0;
@@ -296,6 +304,7 @@ session_start();
         $p_name    =$_REQUEST["p_name"];
         $p_value     =$_REQUEST["p_value"];
         $inputFunc   =$_REQUEST["p_func"];
+        $func_order   =$_REQUEST["func_order"];
         $all   =$_REQUEST["all"];
 
         $newsql = new ezSQL_mysql();
@@ -324,6 +333,7 @@ session_start();
                     sort    ='".$sort."',
                     p_name  ='".$p_name."',
                     p_func  ='".$inputFunc."',
+                    func_order  ='".$func_order."',
                     p_value ='".$p_value."'
                     where id = ".$id;
             $count = $newsql->query($query);
@@ -334,6 +344,7 @@ session_start();
                     sort    ='".$sort."',
                     p_name  ='".$p_name."',
                     p_func  ='".$inputFunc."',
+                    func_order  ='".$func_order."',
                     p_value ='".$p_value."'
                     where p_name = (select * from (select p_name from jxc_salary_config where id = ".$id.") x)";
             $count = $newsql->query($query);

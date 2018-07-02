@@ -89,6 +89,7 @@ function initGrant() {
                     +"    <td><input disabled='disabled' type='text' size='2' name='sort' value='" + entry.sort + "'/></td>"
                     +"    <td><input disabled='disabled' type='text' name='p_name' value='" + entry.p_name + "'/></td>"
                     +"    <td><input disabled='disabled' type='text' name='p_func' value='" + entry.p_func + "'/></td>"
+                    +"    <td><input disabled='disabled' type='text' name='func_order' value='" + entry.func_order + "'/></td>"
                     +"    <td><input disabled='disabled' type='text' size='5' name='p_value' value='" + entry.p_value + "'/></td>"
                     + radioTd
                     +"    <td><input type='hidden' name='id' value='" + entry.id + "'/>"
@@ -302,7 +303,8 @@ function updateTimeType() {
                         <td colspan="2"><font color="red">填写规范: ①所有的数字, 计算符号都必须是英文半角<br/>
                     		②条件选择的公式, 必须是case when x1 then y1 when x2 then y2 ... else yy end 的形式 <br/>
 							③注意②的填写, 必须是 case 开头, end 结尾, 其他普通公式不需要, 例如: 1#2-3#4 <br/>
-							④并不是所有的excel公式, 在mysql中都通用, 例如: sum()就不支持</td>
+							④并不是所有的excel公式, 在mysql中都通用, 例如: sum()就不支持 <br/>
+							⑤公式计算顺序是全局顺序(即:顺序1有且仅有一次出现),不需要计算的设置为0</td>
                     </tr>
                     <tr>
                         <td bgcolor="#FFFFFF" colspan="2">
@@ -335,12 +337,13 @@ function updateTimeType() {
                             <table width="100%" cellspacing="0" border="1" id="table_border5">
                              <thead>
                                 <tr bgcolor="#b9b9ff">
-                                    <td colspan="6">个人设定(5#)</td>
+                                    <td colspan="7">个人设定(5#)</td>
                                 </tr>
                                 <tr>
                                     <th>科目顺序</th>
                                     <th>科目名</th>
                                     <th>计算公式</th>
+                                    <th>公式计算顺序</th>
                                     <th>固定金額</th>
                                     <th>是否显示</th>
                                     <th>操作</th>
@@ -349,6 +352,7 @@ function updateTimeType() {
                                     <td><input type="text" name="sort" size="2"/></td>
                                     <td><input type="text" name="p_name"/></td>
                                     <td><input type="text" name="p_func"/></td>
+                                    <td><input type="text" name="func_order"/></td>
                                     <td><input type="text" name="p_value" size="5"/></td>
                                     <td><label><input type='radio' name='del_flag' value='0'/>否</label>
                                           <label><input type='radio' name='del_flag' value='2'/>是</label>
@@ -365,12 +369,13 @@ function updateTimeType() {
                             <table width="100%" cellspacing="0" border="1" id="table_border1">
                                 <thead>
                                     <tr bgcolor="#b9b9ff">
-                                        <td colspan="6">支給明細(1#)</td>
+                                        <td colspan="7">支給明細(1#)</td>
                                     </tr>
                                     <tr>
                                         <th>科目顺序</th>
                                         <th>科目名</th>
                                         <th>计算公式</th>
+                                    	<th>公式计算顺序</th>
                                         <th>固定金額</th>
                                         <th>是否显示</th>
                                         <th>操作</th>
@@ -379,6 +384,7 @@ function updateTimeType() {
                                         <td><input type="text" name="sort" size="2"/></td>
                                         <td><input type="text" name="p_name"/></td>
                                         <td><input type="text" name="p_func"/></td>
+                                        <td><input type="text" name="func_order"/></td>
                                         <td><input type="text" name="p_value" size="5"/></td>
                                         <td><label><input type='radio' name='del_flag' value='0'/>否</label>
                                               <label><input type='radio' name='del_flag' value='2'/>是</label>
@@ -395,12 +401,13 @@ function updateTimeType() {
                             <table width="100%" cellspacing="0" border="1" id="table_border2">
                              <thead>
                                 <tr bgcolor="#b9b9ff">
-                                    <td colspan="6">控除明細(2#)</td>
+                                    <td colspan="7">控除明細(2#)</td>
                                 </tr>
                                 <tr>
                                     <th>科目顺序</th>
                                     <th>科目名</th>
                                     <th>计算公式</th>
+                                	<th>公式计算顺序</th>
                                     <th>固定金額</th>
                                     <th>是否显示</th>
                                     <th>操作</th>
@@ -409,6 +416,7 @@ function updateTimeType() {
                                     <td><input type="text" name="sort" size="2"/></td>
                                     <td><input type="text" name="p_name"/></td>
                                     <td><input type="text" name="p_func"/></td>
+                                    <td><input type="text" name="func_order"/></td>
                                     <td><input type="text" name="p_value" size="5"/></td>
                                     <td><label><input type='radio' name='del_flag' value='0'/>否</label>
                                           <label><input type='radio' name='del_flag' value='2'/>是</label>
@@ -425,12 +433,13 @@ function updateTimeType() {
                             <table width="100%" cellspacing="0" border="1" id="table_border3">
                              <thead>
                                 <tr bgcolor="#b9b9ff">
-                                    <td colspan="6">勤務(3#)</td>
+                                    <td colspan="7">勤務(3#)</td>
                                 </tr>
                                 <tr>
                                     <th>科目顺序</th>
                                     <th>科目名</th>
                                     <th>计算公式</th>
+                                	<th>公式计算顺序</th>
                                     <th>固定金額</th>
                                     <th>是否显示</th>
                                     <th>操作</th>
@@ -439,6 +448,7 @@ function updateTimeType() {
                                     <td><input type="text" name="sort" size="2"/></td>
                                     <td><input type="text" name="p_name"/></td>
                                     <td><input type="text" name="p_func"/></td>
+                                    <td><input type="text" name="func_order"/></td>
                                     <td><input type="text" name="p_value" size="5"/></td>
                                     <td><label><input type='radio' name='del_flag' value='0'/>否</label>
                                           <label><input type='radio' name='del_flag' value='2'/>是</label>
