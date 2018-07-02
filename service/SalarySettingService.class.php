@@ -124,12 +124,12 @@ session_start();
         and owner = {$user}) x";
         $results_sum = $newsql->get_results($query);
         //更新工资表中的 勤務时间 + 普通残業
-        $query = "update jxc_salary_config set p_value =  {$results_sum[0]->work_time_sum}
+        $query = "update jxc_salary_config set p_value =  {$results_sum[0]->work_time_sum}/60
                 where del_flag <> 1 
                     and user_id={$user} 
                     and p_name = '勤務時間'";
         $newsql->get_results($query);
-        $query = "update jxc_salary_config set p_value =  {$results_sum[0]->over_time1_sum}
+        $query = "update jxc_salary_config set p_value =  {$results_sum[0]->over_time1_sum}/60
                 where del_flag <> 1
                     and user_id={$user} 
                     and p_name = '普通残業'";
