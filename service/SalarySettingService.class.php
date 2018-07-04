@@ -150,8 +150,10 @@ session_start();
         //按照顺序计算所有的公式
         $query = "select id, p_func from jxc_salary_config where del_flag <> 1 and user_id={$user} and func_order > 0 order by func_order ";
         $results = $newsql->get_results($query);
-        foreach ($results as $inputFunc) {
-            caculateInput(" ".$inputFunc->p_func." ", $user, $inputFunc->id);
+		if($results) {
+			foreach ($results as $inputFunc) {
+				caculateInput(" ".$inputFunc->p_func." ", $user, $inputFunc->id);
+			}
         }
         $query = "select * from jxc_salary_config where del_flag <> 1 and user_id={$user} order by  p_type, sort ";
         $results = $newsql->get_results($query);
