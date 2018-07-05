@@ -56,7 +56,6 @@ session_start();
                     where owner = {$user}
                     and atime > date_add(CONCAT((select case  when (select DAY(now()))>15 then date_format(date_add(now(), INTERVAL 1 month), '%Y-%m') else  date_format(now(), '%Y-%m') end),'-15'),INTERVAL -1 MONTH)
                     and atime <= CONCAT((select case  when (select DAY(now()))>15 then date_format(date_add(now(), INTERVAL 1 month), '%Y-%m') else  date_format(now(), '%Y-%m') end),'-15')
-                    and is_holiday = 0
                     and weekday(atime) not in (5, 6))
                 where del_flag <> 1 
                     and user_id={$user} 
