@@ -310,7 +310,7 @@ session_start();
                 return -1;
             } else {
                 $query = "insert into jxc_salary(`p_type`, `p_name`, `p_value`, `description`, `sort`, `user_id`, `salary_date`, `atime`)
-                    select `p_type`, `p_name`, `p_value`, `description`, `sort`, `user_id`, '{$dutyYear}{$dutyMonth}', '{$passDate}'
+                    select `p_type`, `p_name`, `p_value`, `p_func`, `sort`, `user_id`, '{$dutyYear}{$dutyMonth}', '{$passDate}'
                     from jxc_salary_config where user_id = {$users} and del_flag = 2";
                 return $newsql->query($query);
             }
