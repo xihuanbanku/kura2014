@@ -20,7 +20,7 @@ session_start();
         $dutyYear = $_REQUEST["dutyYear"];
         $dutyMonth = $_REQUEST["dutyMonth"];
 
-        $query = "select * from jxc_salary where salary_date = '{$dutyYear}{$dutyMonth}' and del_flag=0 and user_id={$user} order by p_type, sort ";
+        $query = "select p_value, p_name, p_type from jxc_salary where salary_date = '{$dutyYear}{$dutyMonth}' and del_flag=0 and user_id={$user} order by p_type, sort ";
         $newsql = new ezSQL_mysql();
         $results = $newsql->get_results($query);
 		return json_encode($results, JSON_FORCE_OBJECT);

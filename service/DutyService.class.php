@@ -27,9 +27,6 @@ session_start();
         case "updateHoliday":
             $result = updateHoliday();
             break;
-        case "updateState":
-            $result = updateState();
-            break;
         case "checkTodayStatus":
             $result = checkTodayStatus();
             break;
@@ -287,41 +284,6 @@ session_start();
             }
         }
         return $count;
-    }
-    
-    /**
-     * 发布薪酬
-     * @return Ambigous <boolean, number, mixed>
-     */
-    function updateState() {
-        $userID = $_COOKIE['userID'];
-        $passDate = $_REQUEST["passDate"];
-        $salaryState = $_REQUEST["salaryState"];
-        $dutyYear = $_REQUEST["dutyYear"];
-        $dutyMonth = $_REQUEST["dutyMonth"];
-        $users = $_REQUEST["users"];
-        
-        $newsql = new ezSQL_mysql();
-        $query = "select count(0) from jxc_salary where user_id={$users} and salary_date='{$dutyYear}{$dutyMonth}' and del_flag = 0";
-        $count = $newsql->get_var($query);
-        
-        if($salaryState == "1") {
-            if($count > 0) {
-                return -1;
-            } else {
-                $query = "insert into jxc_salary(`p_type`, `p_name`, `p_value`, `description`, `sort`, `user_id`, `salary_date`, `atime`)
-                    select `p_type`, `p_name`, `p_value`, `p_func`, `sort`, `user_id`, '{$dutyYear}{$dutyMonth}', '{$passDate}'
-                    from jxc_salary_config where user_id = {$users} and del_flag = 2";
-                return $newsql->query($query);
-            }
-        } else {
-            if($count <= 0) {
-                return -1;
-            } else {
-                $query = "update jxc_salary set del_flag = 1 where user_id={$users} and salary_date='{$dutyYear}{$dutyMonth}' and del_flag = 0";
-                return $newsql->query($query);
-            }
-        }
     }
     
     /**

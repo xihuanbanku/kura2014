@@ -187,23 +187,6 @@ function updateHoliday() {
 		}
     });
 }
-//审核
-function updateState() {
-    var param = $("#updateTable input").serialize()+"&"+$("#updateTable select").serialize()+"&"+$("#searchForm select").serialize();
-    $.ajax({
-		type: "post",
-		url: "../service/DutyService.class.php?" + param,
-		data: {
-			"flag":"updateState"},
-		success: function(data){
-			if(data >0) {
-				alert("成功");
-			} else {
-				alert("失败, 可能是重复审核或尚未审核");
-			}
-		}
-    });
-}
 //选择用户的时候, 同时要设置上传文件的input 隐藏域
 function setUploadInput() {
 	$("#formHiddenInput").val($("#users").val());
@@ -365,23 +348,6 @@ if ($_FILES['inputExcelBuy']['size'] >0) {
 								</tbody>
 							</table>
 						</td>
-					</tr>
-					<tr>
-						<td>
-						  <table width="100%" id="updateTable">
-						      <thead>
-						          <tr><td>审核人</td><td>审核时间</td><td>审核状态</td><td>操作</td></tr>
-					          </thead>
-						      <tbody>
-						          <tr bgcolor="#FFFFFF">
-						              <td><?php echo $_COOKIE["VioomaUserID"]?></td>
-						              <td><input class="Wdate" onclick="WdatePicker()" name="passDate" type="text" value="<?php echo date("Y-m-d H:i:s")?>"/></td>
-						              <td><select name="salaryState"><option value="0">未审核</option><option value="1">已审核</option></select></td>
-						              <td><button onclick="updateState()">提交</button></td>
-					              </tr>
-				              </tbody>
-						  </table>
-					   </td>
 					</tr>
 				</table>
 			</td>

@@ -33,6 +33,9 @@ session_start();
         case "updateDelFlag":
             $result = updateDelFlag();
             break;
+        case "updateState":
+            $result = updateState();
+            break;
         case "updateTimeType":
             $result = updateTimeType();
             break;
@@ -96,7 +99,7 @@ session_start();
                     and atime <= CONCAT((select case  when (select DAY(now()))>15 then date_format(date_add(now(), INTERVAL 1 month), '%Y-%m') else  date_format(now(), '%Y-%m') end),'-15')
                     and is_holiday = 0
                     and atime < now()
-                    and IfNULL(check_in, 9) > concat(atime, ' ', (select p_value from jxc_salary_config where p_name = '出勤时间' and user_id={$user} and del_flag <>1 ))
+                    and IfNULL(check_in, '9') > concat(atime, ' ', (select p_value from jxc_salary_config where p_name = '出勤时间' and user_id={$user} and del_flag <>1 ))
                     and weekday(atime) not in (5, 6)) x)
                 where del_flag <> 1 
                     and user_id={$user} 
@@ -110,7 +113,7 @@ session_start();
                     and atime <= CONCAT((select case  when (select DAY(now()))>15 then date_format(date_add(now(), INTERVAL 1 month), '%Y-%m') else  date_format(now(), '%Y-%m') end),'-15')
                     and is_holiday = 0
                     and atime < now()
-                    and IfNULL(check_out, 0) < concat(atime, ' ', (select p_value from jxc_salary_config where p_name = '退勤时间' and user_id={$user} and del_flag <>1 ))
+                    and IfNULL(check_out, '0') < concat(atime, ' ', (select p_value from jxc_salary_config where p_name = '退勤时间' and user_id={$user} and del_flag <>1 ))
                     and weekday(atime) not in (5, 6)) x)
                 where del_flag <> 1 
                     and user_id={$user} 
@@ -440,6 +443,40 @@ session_start();
                 p_value ='".$p_value."'
                 where id = ".$id;
         return $newsql->query($query);
+    }
+
+    /**
+     * 发布薪酬
+     * @return Ambigous <boolean, number, mixed>
+     */
+    function updateState() {
+        $userID = $_COOKIE['userID'];
+        $passDate = $_REQUEST["passDate"];
+        $salaryState = $_REQUEST["salaryState"];
+        $dutyYearMonth = date("Ym");
+        $users = $_REQUEST["users"];
+    
+        $newsql = new ezSQL_mysql();
+        $query = "select count(0) from jxc_salary where user_id={$users} and salary_date='{$dutyYearMonth}' and del_flag = 0";
+        $count = $newsql->get_var($query);
+    
+        if($salaryState == "1") {
+            if($count > 0) {
+                return -1;
+            } else {
+                $query = "insert into jxc_salary(`p_type`, `p_name`, `p_value`, `description`, `sort`, `user_id`, `salary_date`, `atime`)
+                select `p_type`, `p_name`, `p_value`, `p_func`, `sort`, `user_id`, '{$dutyYearMonth}', '{$passDate}'
+                from jxc_salary_config where user_id = {$users} and del_flag = 0";
+                return $newsql->query($query);
+            }
+        } else {
+            if($count <= 0) {
+                return -1;
+            } else {
+                $query = "update jxc_salary set del_flag = 1 where user_id={$users} and salary_date='{$dutyYearMonth}' and del_flag = 0";
+                return $newsql->query($query);
+            }
+        }
     }
     
     /**
