@@ -19,12 +19,22 @@ require_once (dirname(__FILE__) . "/../include/checklogin.php");
 }
 
 </style>
-<title><?php echo $cfg_softname;?>給料設定</title>
+<title><?php echo $cfg_softname;?>給料备考</title>
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" src="../js/loading.js"></script>
 <script type="text/javascript">
-var url = "../service/SalarySettingService.class.php";
+var url = "../service/SalaryService.class.php";
 $(function(){
+	// 初始化默认日期
+	var myDate = new Date();
+	//获取完整的年份(4位,1970-????)
+	$("select[name='dutyYear']").val(myDate.getFullYear());
+	//获取当前月份(0-11,0代表1月)
+	if(myDate.getMonth() < 10) {
+		$("select[name='dutyMonth']").val("0"+(myDate.getMonth()+1));
+	} else {
+		$("select[name='dutyMonth']").val(myDate.getMonth()+1);
+	}
     $.ajax({
         type: "post",
         url: "../service/MenuService.class.php",
@@ -69,7 +79,7 @@ function initGrant() {
     $.ajax({
         type: "post",
         url: url,
-        data: {"flag":"initPage", "user":user},
+        data: {"flag":"initPage4Admin", "user":user, "dutyYear":$("select[name=dutyYear]").val(), "dutyMonth":$("select[name=dutyMonth]").val()},
         success: function(data){
             data = eval("("+data+")");
             var html1="";
@@ -86,18 +96,17 @@ function initGrant() {
                     radioTd = "<td>否</td>";
                 }
                 row ="<tr>"
-                    +"    <td><input disabled='disabled' type='text' size='2' name='sort' value='" + entry.sort + "'/></td>"
-                    +"    <td><input disabled='disabled' type='text' name='p_name' value='" + entry.p_name + "'/></td>"
-                    +"    <td><input disabled='disabled' type='text' name='p_func' value='" + entry.p_func + "'/></td>"
-                    +"    <td><input disabled='disabled' type='text' name='func_order' value='" + entry.func_order + "'/></td>"
-                    +"    <td><input disabled='disabled' type='text' size='5' name='p_value' value='" + entry.p_value + "'/></td>"
-                    + radioTd
+                    +"    <td>" + entry.sort + "</td>"
+                    +"    <td>" + entry.p_name + "</td>"
+                    +"    <td title='"+entry.p_func +"'>" + (entry.p_func.length > 20 ? (entry.p_func.substr(0, 20) + "...") : entry.p_func) +"</td>"
+                    +"    <td>" + entry.p_value + "</td>"
+                    +"    <td><input disabled='disabled' type='text' size='5' name='mod_value' value='" + entry.mod_value + "'/></td>"
                     +"    <td><input type='hidden' name='id' value='" + entry.id + "'/>"
                     +"        <button>修改</button>"
                     +"        <button>保存</button>"
-                    +"        <button value='" + entry.id + "'>删除</button>"
+                    +"        <span style='display:none'><button value='" + entry.id + "'>删除</button>"
                     +"        <button>全局保存</button>"
-                    +"        <button>切换显示</button>"
+                    +"        <button>切换显示</button></span>"
                     +"        <button>取消</button></td>"
                     +"</tr>"
                     +"";
@@ -251,36 +260,6 @@ function initGrant() {
         }
     });
 }
-//更改用户类型
-function updateUserType() {
-    $.ajax({
-        type: "post",
-        url: url,
-        data: "flag=updateUserType&"+$("#userType input[type='radio']:checked").serialize()+"&id="+$("#userTypeId").val(),
-        success: function(data){
-            if(data > 0) {
-                alert("成功");
-            } else {
-                alert("失败");
-            }
-        }
-    });
-}
-//更改时间展示方式
-function updateTimeType() {
-    $.ajax({
-        type: "post",
-        url: url,
-        data: "flag=updateTimeType&"+$("#timeType input[type='radio']:checked").serialize()+"&id="+$("#timeTypeId").val(),
-        success: function(data){
-            if(data > 0) {
-                alert("成功");
-            } else {
-                alert("失败");
-            }
-        }
-    });
-}
 //审核发布薪酬
 function updateState() {
     var param = $("#updateTable input").serialize()+"&"+$("#updateTable select").serialize()+"&users="+$("#users").val();
@@ -312,15 +291,27 @@ function updateState() {
             <td>
                 <table width="100%" border="0" cellpadding="0" cellspacing="2" id="contentTable">
                     <tr>
-                        <td><strong>&nbsp;給料設定</strong></td>
-                        <td align="right"><select id="users"></select> <input type="button" value="修正" onclick="initGrant();"/></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><font color="red">填写规范: ①所有的数字, 计算符号都必须是英文半角<br/>
-                    		②条件选择的公式, 必须是case when x1 then y1 when x2 then y2 ... else yy end 的形式 <br/>
-							③注意②的填写, 必须是 case 开头, end 结尾, 其他普通公式不需要, 例如: 1#2-3#4 <br/>
-							④并不是所有的excel公式, 在mysql中都通用, 例如: sum()就不支持 <br/>
-							⑤公式计算顺序是全局顺序(即:顺序1有且仅有一次出现),不需要计算的设置为0</td>
+                        <td><strong>&nbsp;給料备考</strong></td>
+                        <td align="right">
+                        	<select name="dutyYear">
+								<option value="2017">2017</option>
+								<option value="2018">2018</option>
+							</select>年
+							<select name="dutyMonth">
+								<option value="01">01</option>
+								<option value="02">02</option>
+								<option value="03">03</option>
+								<option value="04">04</option>
+								<option value="05">05</option>
+								<option value="06">06</option>
+								<option value="07">07</option>
+								<option value="08">08</option>
+								<option value="09">09</option>
+								<option value="10">10</option>
+								<option value="11">11</option>
+								<option value="12">12</option>
+							</select>月
+							<select id="users"></select> <input type="button" value="修正" onclick="initGrant();"/></td>
                     </tr>
                     <tr>
                         <td bgcolor="#FFFFFF" colspan="2">
@@ -334,17 +325,17 @@ function updateState() {
                                         <label><input type="radio" name="userType" value="1"/>正社員</label>
                                         <label><input type="radio" name="userType" value="2"/>アルバイト</label>
                                     </td>
-                                    <td><input id="userTypeId" type="hidden" name="id"/><button>修改</button><button onclick="updateUserType()">保存</button></td>
+                                    <td></td>
                                 </tr>
-                                <tr>
+                                <!-- <tr>
                                     <td>考勤计算时间设定</td>
                                     <td id="timeType" colspan="2">
                                         <label><input type="radio" name="timeType" value="1"/>1分钟单位</label>
                                         <label><input type="radio" name="timeType" value="2"/>15分钟单位</label>
                                         <label><input type="radio" name="timeType" value="3"/>30分钟单位</label>
                                     </td>
-                                    <td><input id="timeTypeId" type="hidden" name="id"/><button>修改</button><button onclick="updateTimeType()">保存</button></td>
-                                </tr>
+                                    <td></td>
+                                </tr> -->
                             </table>
                         </td>
                     </tr>
@@ -359,21 +350,9 @@ function updateState() {
                                     <th>科目顺序</th>
                                     <th>科目名</th>
                                     <th>计算公式</th>
-                                    <th>公式计算顺序</th>
-                                    <th>固定金額</th>
-                                    <th>是否显示</th>
+                                    <th>参考值</th>
+                                    <th>修改值</th>
                                     <th>操作</th>
-                                </tr>
-                                <tr>
-                                    <td><input type="text" name="sort" size="2"/></td>
-                                    <td><input type="text" name="p_name"/></td>
-                                    <td><input type="text" name="p_func"/></td>
-                                    <td><input type="text" name="func_order"/></td>
-                                    <td><input type="text" name="p_value" size="5"/></td>
-                                    <td><label><input type='radio' name='del_flag' value='0'/>否</label>
-                                          <label><input type='radio' name='del_flag' value='2'/>是</label>
-                                    </td>
-                                    <td><input type="hidden" name="p_type" value="5"/><button>追加项目</button></td>
                                 </tr>
                              </thead>
                              <tbody></tbody>
@@ -391,21 +370,9 @@ function updateState() {
                                         <th>科目顺序</th>
                                         <th>科目名</th>
                                         <th>计算公式</th>
-                                    	<th>公式计算顺序</th>
-                                        <th>固定金額</th>
-                                        <th>是否显示</th>
+                                        <th>参考值</th>
+                                        <th>修改值</th>
                                         <th>操作</th>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="text" name="sort" size="2"/></td>
-                                        <td><input type="text" name="p_name"/></td>
-                                        <td><input type="text" name="p_func"/></td>
-                                        <td><input type="text" name="func_order"/></td>
-                                        <td><input type="text" name="p_value" size="5"/></td>
-                                        <td><label><input type='radio' name='del_flag' value='0'/>否</label>
-                                              <label><input type='radio' name='del_flag' value='2'/>是</label>
-                                        </td>
-                                        <td><input type="hidden" name="p_type" value="1"/><button>追加项目</button></td>
                                     </tr>
                                  </thead>
                                  <tbody></tbody>
@@ -423,21 +390,9 @@ function updateState() {
                                     <th>科目顺序</th>
                                     <th>科目名</th>
                                     <th>计算公式</th>
-                                	<th>公式计算顺序</th>
-                                    <th>固定金額</th>
-                                    <th>是否显示</th>
+                                    <th>参考值</th>
+                                    <th>修改值</th>
                                     <th>操作</th>
-                                </tr>
-                                <tr>
-                                    <td><input type="text" name="sort" size="2"/></td>
-                                    <td><input type="text" name="p_name"/></td>
-                                    <td><input type="text" name="p_func"/></td>
-                                    <td><input type="text" name="func_order"/></td>
-                                    <td><input type="text" name="p_value" size="5"/></td>
-                                    <td><label><input type='radio' name='del_flag' value='0'/>否</label>
-                                          <label><input type='radio' name='del_flag' value='2'/>是</label>
-                                    </td>
-                                    <td><input type="hidden" name="p_type" value="2"/><button>追加项目</button></td>
                                 </tr>
                              </thead>
                              <tbody></tbody>
@@ -455,28 +410,16 @@ function updateState() {
                                     <th>科目顺序</th>
                                     <th>科目名</th>
                                     <th>计算公式</th>
-                                	<th>公式计算顺序</th>
-                                    <th>固定金額</th>
-                                    <th>是否显示</th>
+                                    <th>参考值</th>
+                                    <th>修改值</th>
                                     <th>操作</th>
-                                </tr>
-                                <tr>
-                                    <td><input type="text" name="sort" size="2"/></td>
-                                    <td><input type="text" name="p_name"/></td>
-                                    <td><input type="text" name="p_func"/></td>
-                                    <td><input type="text" name="func_order"/></td>
-                                    <td><input type="text" name="p_value" size="5"/></td>
-                                    <td><label><input type='radio' name='del_flag' value='0'/>否</label>
-                                          <label><input type='radio' name='del_flag' value='2'/>是</label>
-                                    </td>
-                                    <td><input type="hidden" name="p_type" value="3"/><button>追加项目</button></td>
                                 </tr>
                              </thead>
                              <tbody></tbody>
                             </table>
                         </td>
                     </tr>
-					<!-- <tr>
+					<tr>
 						<td>
 						  <table width="100%" id="updateTable">
 						      <thead>
@@ -484,15 +427,15 @@ function updateState() {
 					          </thead>
 						      <tbody>
 						          <tr bgcolor="#FFFFFF">
-						              <td><php echo $_COOKIE["VioomaUserID"]?></td>
-						              <td><input class="Wdate" onclick="WdatePicker()" name="passDate" type="text" value="<php echo date("Y-m-d H:i:s")?>"/></td>
+						              <td><?php echo $_COOKIE["VioomaUserID"]?></td>
+						              <td><input class="Wdate" onclick="WdatePicker()" name="passDate" type="text" value="<?php echo date("Y-m-d H:i:s")?>"/></td>
 						              <td><select name="salaryState"><option value="0">未审核</option><option value="1">已审核</option></select></td>
 						              <td><button onclick="updateState()">提交</button></td>
 					              </tr>
 				              </tbody>
 						  </table>
 					   </td>
-					</tr> -->
+					</tr>
                 </table>
             </td>
             <td>&nbsp;</td>

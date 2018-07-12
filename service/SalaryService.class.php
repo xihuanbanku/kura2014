@@ -9,12 +9,21 @@ session_start();
         case "initPage":
             $result = initPage();
         break;
+        case "initPage4Admin":
+            $result = initPage4Admin();
+        break;
+        case "update":
+            $result = update();
+            break;
         default:
             return "error";
         break;
     }
     echo $result;  
     
+    /**
+     * 查看薪资
+     */
     function initPage() {
         $user = $_COOKIE['userID'];
         $dutyYear = $_REQUEST["dutyYear"];
@@ -25,7 +34,39 @@ session_start();
         $results = $newsql->get_results($query);
 		return json_encode($results, JSON_FORCE_OBJECT);
     }
+    
+    /**
+     * 管理员初始化页面
+     * @return string
+     */
+    function initPage4Admin() {
+        $user = $_REQUEST['user'];
+        $dutyYear = $_REQUEST["dutyYear"];
+        $dutyMonth = $_REQUEST["dutyMonth"];
 
+        $query = "select id, sort, p_value, p_name, p_type, p_func, mod_value, user_id from jxc_salary where salary_date = '{$dutyYear}{$dutyMonth}' and del_flag=0 and user_id={$user} order by p_type, sort ";
+        $newsql = new ezSQL_mysql();
+        $results = $newsql->get_results($query);
+		return json_encode($results, JSON_FORCE_OBJECT);
+    }
+    
+    /**
+     * 更新记录
+     * @return boolean|number|mixed
+     */
+    function update() {
+        $id = $_REQUEST["id"];
+        $user = $_REQUEST["user"];
+        $mod_value     =$_REQUEST["mod_value"];
+        
+        $newsql = new ezSQL_mysql();
+        $query = "update jxc_salary
+                set
+                mod_value    ='".$mod_value."'
+                where id = ".$id;
+        return $newsql->query($query);
+    }
+    
     /**
      * 导出excel
      * @return Ambigous <boolean, number, mixed>
