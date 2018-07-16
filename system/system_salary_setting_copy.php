@@ -262,11 +262,11 @@ function initGrant() {
 }
 //审核发布薪酬
 function updateState() {
-    var param = $("#updateTable input").serialize()+"&"+$("#updateTable select").serialize()+"&users="+$("#users").val();
+    var param = $("#updateTable input").serialize()+"&"+$("#updateTable select").serialize();
     $.ajax({
 		type: "post",
-		url: "../service/SalarySettingService.class.php?" + param,
-		data: {"flag":"updateState"},
+		url: "../service/SalaryService.class.php?" + param,
+		data: {"flag":"updateState", "users": $("#users").val(), "dutyYear":$("select[name=dutyYear]").val(), "dutyMonth":$("select[name=dutyMonth]").val()},
 		success: function(data){
 			if(data >0) {
 				alert("成功");
@@ -429,7 +429,7 @@ function updateState() {
 						          <tr bgcolor="#FFFFFF">
 						              <td><?php echo $_COOKIE["VioomaUserID"]?></td>
 						              <td><input class="Wdate" onclick="WdatePicker()" name="passDate" type="text" value="<?php echo date("Y-m-d H:i:s")?>"/></td>
-						              <td><select name="salaryState"><option value="0">未审核</option><option value="1">已审核</option></select></td>
+						              <td><select name="salaryState"><option value="0">取消审核</option><option value="1">确认审核</option></select></td>
 						              <td><button onclick="updateState()">提交</button></td>
 					              </tr>
 				              </tbody>

@@ -15,6 +15,9 @@ session_start();
         case "update":
             $result = update();
             break;
+        case "updateState":
+            $result = updateState();
+            break;
         default:
             return "error";
         break;
@@ -29,7 +32,7 @@ session_start();
         $dutyYear = $_REQUEST["dutyYear"];
         $dutyMonth = $_REQUEST["dutyMonth"];
 
-        $query = "select p_value, p_name, p_type from jxc_salary where salary_date = '{$dutyYear}{$dutyMonth}' and del_flag=0 and user_id={$user} order by p_type, sort ";
+        $query = "select p_value, p_name, p_type from jxc_salary where salary_date = '{$dutyYear}{$dutyMonth}' and del_flag=2 and user_id={$user} order by p_type, sort ";
         $newsql = new ezSQL_mysql();
         $results = $newsql->get_results($query);
 		return json_encode($results, JSON_FORCE_OBJECT);
@@ -48,6 +51,39 @@ session_start();
         $newsql = new ezSQL_mysql();
         $results = $newsql->get_results($query);
 		return json_encode($results, JSON_FORCE_OBJECT);
+    }
+
+    /**
+     * 发布薪酬
+     * @return Ambigous <boolean, number, mixed>
+     */
+    function updateState() {
+        $userID = $_COOKIE['userID'];
+        $passDate = $_REQUEST["passDate"];
+        $salaryState = $_REQUEST["salaryState"];
+        $dutyYear = $_REQUEST["dutyYear"];
+        $dutyMonth = $_REQUEST["dutyMonth"];
+        $users = $_REQUEST["users"];
+    
+        $newsql = new ezSQL_mysql();
+        $query = "select count(0) from jxc_salary where user_id={$users} and salary_date='{$dutyYear}{$dutyMonth}' and del_flag = 2";
+        $count = $newsql->get_var($query);
+    
+        if($salaryState == "1") {
+            if($count > 0) {
+                return -1;
+            } else {
+                $query = "update jxc_salary set del_flag = 2, atime = now() where user_id={$users} and salary_date='{$dutyYear}{$dutyMonth}' and del_flag = 0";
+                return $newsql->query($query);
+            }
+        } else {
+            if($count <= 0) {
+                return -1;
+            } else {
+                $query = "update jxc_salary set del_flag = 1 where user_id={$users} and salary_date='{$dutyYear}{$dutyMonth}' and del_flag = 2";
+                return $newsql->query($query);
+            }
+        }
     }
     
     /**
