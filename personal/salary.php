@@ -42,7 +42,7 @@ function initPage(pageIndex) {
 			var td_count2=0;
 			var td_count3=0;
 			$.each(data, function(entryIndex, entry){
-				tmp_html ="    <th>" + entry.p_name + "</th><td>" + entry.p_value + "</td>";
+				tmp_html ="    <th>" + entry.p_name + "</th><td>" + entry.mod_value + "</td>";
     			switch(entry.p_type) {
         			case "1":
         				tbody_html1+=tmp_html;
