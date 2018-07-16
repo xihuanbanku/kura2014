@@ -47,14 +47,14 @@ session_start();
         $dutyYear = $_REQUEST["dutyYear"];
         $dutyMonth = $_REQUEST["dutyMonth"];
 
-        $query = "select id, sort, p_value, p_name, p_type, p_func, mod_value, user_id from jxc_salary where salary_date = '{$dutyYear}{$dutyMonth}' and del_flag in (0, 1) and user_id={$user} order by p_type, sort ";
+        $query = "select id, sort, p_value, p_name, p_type, p_func, mod_value, user_id from jxc_salary where salary_date = '{$dutyYear}{$dutyMonth}' and user_id={$user} order by p_type, sort ";
         $newsql = new ezSQL_mysql();
         $results = $newsql->get_results($query);
 		return json_encode($results, JSON_FORCE_OBJECT);
     }
 
     /**
-     * 发布薪酬
+     * 发布薪酬   salaryState: 0=默认 1=取消审核 2=通过审核(个人展示)
      * @return Ambigous <boolean, number, mixed>
      */
     function updateState() {
@@ -73,14 +73,14 @@ session_start();
             if($count > 0) {
                 return -1;
             } else {
-                $query = "update jxc_salary set del_flag = 2, atime = now() where user_id={$users} and salary_date='{$dutyYear}{$dutyMonth}' and del_flag in (0, 1)";
+                $query = "update jxc_salary set del_flag = 2, atime = now() where user_id={$users} and salary_date='{$dutyYear}{$dutyMonth}' and del_flag = 0";
                 return $newsql->query($query);
             }
         } else {
             if($count <= 0) {
                 return -1;
             } else {
-                $query = "update jxc_salary set del_flag = 1 where user_id={$users} and salary_date='{$dutyYear}{$dutyMonth}' and del_flag = 2";
+                $query = "update jxc_salary set del_flag = 0 where user_id={$users} and salary_date='{$dutyYear}{$dutyMonth}' and del_flag = 2";
                 return $newsql->query($query);
             }
         }
