@@ -73,7 +73,7 @@ session_start();
             if($count > 0) {
                 return -1;
             } else {
-                $query = "update jxc_salary set del_flag = 2, atime = now() where user_id={$users} and salary_date='{$dutyYear}{$dutyMonth}' and del_flag = 0";
+                $query = "update jxc_salary set del_flag = 2, atime = now() where user_id={$users} and salary_date='{$dutyYear}{$dutyMonth}' and del_flag in (0, 1)";
                 return $newsql->query($query);
             }
         } else {
