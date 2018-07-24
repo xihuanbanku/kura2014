@@ -91,20 +91,6 @@ session_start();
                     and user_id={$user} 
                     and p_name = '勤務日数'";
         $newsql->get_results($query);
-        //早退回数
-        $query = "update jxc_salary_config set p_value = 
-                (select * from (select count(0) from jxc_duty 
-                    where owner = {$user}
-                    and atime > date_add(CONCAT((select case  when (select DAY(now()))>15 then date_format(date_add(now(), INTERVAL 1 month), '%Y-%m') else  date_format(now(), '%Y-%m') end),'-15'),INTERVAL -1 MONTH)
-                    and atime <= CONCAT((select case  when (select DAY(now()))>15 then date_format(date_add(now(), INTERVAL 1 month), '%Y-%m') else  date_format(now(), '%Y-%m') end),'-15')
-                    and is_holiday = 0
-                    and atime < now()
-                    and IfNULL(check_in, '9') > concat(atime, ' ', (select p_value from jxc_salary_config where p_name = '出勤时间' and user_id={$user} and del_flag <>1 ))
-                    and weekday(atime) not in (5, 6)) x)
-                where del_flag <> 1 
-                    and user_id={$user} 
-                    and p_name = '早退回数'";
-        $newsql->get_results($query);
         //遅刻回数
         $query = "update jxc_salary_config set p_value = 
                 (select * from (select count(0) from jxc_duty 
@@ -113,11 +99,25 @@ session_start();
                     and atime <= CONCAT((select case  when (select DAY(now()))>15 then date_format(date_add(now(), INTERVAL 1 month), '%Y-%m') else  date_format(now(), '%Y-%m') end),'-15')
                     and is_holiday = 0
                     and atime < now()
-                    and IfNULL(check_out, '0') < concat(atime, ' ', (select p_value from jxc_salary_config where p_name = '退勤时间' and user_id={$user} and del_flag <>1 ))
+                    and IfNULL(check_in, '9') > check_in_on_time
                     and weekday(atime) not in (5, 6)) x)
                 where del_flag <> 1 
                     and user_id={$user} 
                     and p_name = '遅刻回数'";
+        $newsql->get_results($query);
+        //早退回数
+        $query = "update jxc_salary_config set p_value = 
+                (select * from (select count(0) from jxc_duty 
+                    where owner = {$user}
+                    and atime > date_add(CONCAT((select case  when (select DAY(now()))>15 then date_format(date_add(now(), INTERVAL 1 month), '%Y-%m') else  date_format(now(), '%Y-%m') end),'-15'),INTERVAL -1 MONTH)
+                    and atime <= CONCAT((select case  when (select DAY(now()))>15 then date_format(date_add(now(), INTERVAL 1 month), '%Y-%m') else  date_format(now(), '%Y-%m') end),'-15')
+                    and is_holiday = 0
+                    and atime < now()
+                    and IfNULL(check_out, '0') < check_out_on_time
+                    and weekday(atime) not in (5, 6)) x)
+                where del_flag <> 1 
+                    and user_id={$user} 
+                    and p_name = '早退回数'";
         $newsql->get_results($query);
         //勤務時間 + 普通残業
         

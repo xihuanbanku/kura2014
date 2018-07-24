@@ -83,8 +83,8 @@ function initPage(pageIndex) {
             		+"<tr "+trStyle+">"
             		+"    <td><input type=\"checkbox\" value=\"" + entry.id + "\" name=\"strChk[]\"></td>"
  	           		+"    <td>"+entry.atime+"("+entry.wk+")</td>"
- 	           		+"    <td><input class='Wdate' onclick='WdatePicker()' size='14' type='text' name='check_in_on_time' value='"+entry.check_in_on_time+"'/></td>"
- 	           		+"    <td><input class='Wdate' onclick='WdatePicker()' size='14' type='text' name='check_out_on_time' value='"+entry.check_out_on_time+"'/></td>"
+//  	           		+"    <td><input class='Wdate' onclick='WdatePicker()' size='14' type='text' name='check_in_on_time' value='"+entry.check_in_on_time+"'/></td>"
+//  	           		+"    <td><input class='Wdate' onclick='WdatePicker()' size='14' type='text' name='check_out_on_time' value='"+entry.check_out_on_time+"'/></td>"
  	           		+"    <td><input class='Wdate' onclick='WdatePicker()' size='14' type='text' name='check_in' value='"+entry.check_in+"'/></td>"
  	           		+"    <td><input class='Wdate' onclick='WdatePicker()' size='14' type='text' name='snooze_start' value='"+entry.snooze_start+"'/></td>"
  	           		+"    <td><input class='Wdate' onclick='WdatePicker()' size='14' type='text' name='snooze_end' value='"+entry.snooze_end+"'/></td>"
@@ -126,8 +126,6 @@ function initPage(pageIndex) {
                     		+"    <td></td>"
                     		+"    <td>合计</td>"
                     		+"    <td></td>"
-                    		+"    <td></td>"
-                       		+"    <td></td>"
                        		+"    <td></td>"
                        		+"    <td></td>"
                        		+"    <td></td>"
@@ -315,8 +313,8 @@ if ($_FILES['inputExcelBuy']['size'] >0) {
 									<tr>
                                         <th style="width: 20px;"><input type="checkbox" onclick="chkAll(this)"/>選択</th>
 										<th style="width:9%;" class="cellcolor">日付</th>
-										<th style="width:11%;" class="cellcolor">规定出勤时间</th>
-										<th style="width:11%;" class="cellcolor">规定退勤时间</th>
+										<!-- <th style="width:11%;" class="cellcolor">规定出勤时间</th>
+										<th style="width:11%;" class="cellcolor">规定退勤时间</th> -->
 										<th style="width:11%;" class="cellcolor">出勤時刻</th>
 										<th style="width:11%;" class="cellcolor">開始時間</th>
 										<th style="width:11%;" class="cellcolor">終了時間</th>
@@ -332,8 +330,6 @@ if ($_FILES['inputExcelBuy']['size'] >0) {
 								</thead>
 								<tbody>
                                     <tr id="formTr">
-                                        <td></td>
-                                        <td></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
