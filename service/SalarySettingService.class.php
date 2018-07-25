@@ -33,9 +33,6 @@ session_start();
         case "updateDelFlag":
             $result = updateDelFlag();
             break;
-        case "updateState":
-            $result = updateState();
-            break;
         case "updateTimeType":
             $result = updateTimeType();
             break;
@@ -90,6 +87,44 @@ session_start();
                 where del_flag <> 1 
                     and user_id={$user} 
                     and p_name = '勤務日数'";
+        $newsql->get_results($query);
+        //今年使用済有給日数 统计当年 4.1-次年4.1
+        $query = "update jxc_salary_config set p_value = 
+                (select count(0) from `jxc_duty`
+                    where
+                        case
+                    when month (now()) > 4 then
+                        atime >= concat(YEAR(now()), '-04-01')
+                        and atime < concat(DATE_ADD(now(),INTERVAL 1 year), '-04-01')
+                    else 
+                        atime >= concat(DATE_ADD(now(),INTERVAL -1 year), '-04-01')
+                        and atime < concat(YEAR(now()), '-04-01')
+                    end
+                    and is_holiday = 1
+                    and owner = {$user}) 
+                where del_flag <> 1 
+                    and user_id={$user} 
+                    and p_name = '今年使用済有給日数'";
+        $newsql->get_results($query);
+        //月遅刻早退時間合計
+        $query = "update jxc_salary_config set p_value = 
+                (ifnull((select floor(sum(TIME_TO_SEC(timediff(check_in, check_in_on_time)))/60) from `jxc_duty`
+                    where
+                        check_in > check_in_on_time
+                    and atime > date_add(CONCAT((select case  when (select DAY(now()))>15 then date_format(date_add(now(), INTERVAL 1 month), '%Y-%m') else  date_format(now(), '%Y-%m') end),'-15'),INTERVAL -1 MONTH)
+                    and atime <= CONCAT((select case  when (select DAY(now()))>15 then date_format(date_add(now(), INTERVAL 1 month), '%Y-%m') else  date_format(now(), '%Y-%m') end),'-15')
+                    and is_holiday = 0
+                    and owner = {$user}), 0) + 
+                ifnull((select floor(sum(TIME_TO_SEC(timediff(check_out, check_out_on_time)))/60) from `jxc_duty`
+                    where
+                        check_out < check_out_on_time
+                    and atime > date_add(CONCAT((select case  when (select DAY(now()))>15 then date_format(date_add(now(), INTERVAL 1 month), '%Y-%m') else  date_format(now(), '%Y-%m') end),'-15'),INTERVAL -1 MONTH)
+                    and atime <= CONCAT((select case  when (select DAY(now()))>15 then date_format(date_add(now(), INTERVAL 1 month), '%Y-%m') else  date_format(now(), '%Y-%m') end),'-15')
+                    and is_holiday = 0
+                    and owner = {$user}), 0)) 
+                where del_flag <> 1 
+                    and user_id={$user} 
+                    and p_name = '月遅刻早退時間合計'";
         $newsql->get_results($query);
         //遅刻回数
         $query = "update jxc_salary_config set p_value = 
@@ -382,7 +417,7 @@ session_start();
             $count = $newsql->query($query);
         }
         //如果是需要公式计算, 将结果按照公式计算出来
-        if($inputFunc) {
+        if($func_order > 0) {
             caculateInput(" ".$inputFunc." ", $user, $id);
         }
         return $count;
@@ -445,40 +480,6 @@ session_start();
         return $newsql->query($query);
     }
 
-    /**
-     * 发布薪酬
-     * @return Ambigous <boolean, number, mixed>
-     */
-    function updateState() {
-        $userID = $_COOKIE['userID'];
-        $passDate = $_REQUEST["passDate"];
-        $salaryState = $_REQUEST["salaryState"];
-        $dutyYearMonth = date("Ym");
-        $users = $_REQUEST["users"];
-    
-        $newsql = new ezSQL_mysql();
-        $query = "select count(0) from jxc_salary where user_id={$users} and salary_date='{$dutyYearMonth}' and del_flag = 0";
-        $count = $newsql->get_var($query);
-    
-        if($salaryState == "1") {
-            if($count > 0) {
-                return -1;
-            } else {
-                $query = "insert into jxc_salary(`p_type`, `p_name`, `p_value`, `description`, `sort`, `user_id`, `salary_date`, `atime`)
-                select `p_type`, `p_name`, `p_value`, `p_func`, `sort`, `user_id`, '{$dutyYearMonth}', '{$passDate}'
-                from jxc_salary_config where user_id = {$users} and del_flag = 0";
-                return $newsql->query($query);
-            }
-        } else {
-            if($count <= 0) {
-                return -1;
-            } else {
-                $query = "update jxc_salary set del_flag = 1 where user_id={$users} and salary_date='{$dutyYearMonth}' and del_flag = 0";
-                return $newsql->query($query);
-            }
-        }
-    }
-    
     /**
      * 获取时间展示方式类型
      * @return boolean|number|mixed

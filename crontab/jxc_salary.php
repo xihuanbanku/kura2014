@@ -14,15 +14,15 @@ require_once '../include/ez_sql_mysql.php';
     echo "jxc_salary:[".$result."]\n";
 
     function insert() {
-        $salary_date = date("Ym");
+        $salary_date = date("Ym",strtotime("-1 month"));
         $today = date("d");
         if($today == 16) {
             $newsql = new ezSQL_mysql();
             $insert = "INSERT INTO jxc_salary (`p_type`, `p_name`, `p_func`, `p_value`, `mod_value`, `sort`, `user_id`, `salary_date`)
                             			SELECT `p_type`, `p_name`, `p_func`, `p_value`, `p_value`, `sort`, `user_id`, '".$salary_date."'
                                             FROM jxc_salary_config
-                                            WHERE del_flag = 0)";
-            return $newsql->query($insert);
+                                            WHERE del_flag = 0";
+            return "[{$salary_date}]工资发放成功:".$newsql->query($insert);
         } else {
             return $today." 未到发工资日期";
         }

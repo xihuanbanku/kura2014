@@ -68,7 +68,7 @@ if ($action=='login')
   $loginip=getip();
   $logindate=getdatetimemk(time());
   $lsql=new Dedesql(false);
-  $sql="select *, b.id bid from #@__boss a, #@__staff b where a.boss = b.s_no and boss='$username' and password='".md5($password)."'";
+  $sql="select * from #@__staff b where b.s_no ='$username' and password='".md5($password)."'";
 //   $sql="select * from #@__boss where boss='takamatsu' and password='dba634fa0ce5b357b87dc37d7e7963d7'";
   $lsql->SetQuery($sql);
   $lsql->Execute();
@@ -85,12 +85,12 @@ if ($action=='login')
     $message="正常登録しました。";
     $_SESSION['VioomaUserID']=$username;
     $_SESSION['mac']=$mac_addr;
-    $_SESSION["userID"]=$row["bid"];
+    $_SESSION["userID"]=$row["id"];
     setcookie('VioomaUserID',$username, -1);
-    setcookie('rank',$row['rank'], -1);
-    setcookie('userID',$row['bid'], -1);
+    setcookie('rank',$row['s_utype'], -1);
+    setcookie('userID',$row['id'], -1);
     WriteNote($message,$logindate,$loginip,$username);
-    $loginsql="update #@__boss set logindate='$logindate',loginip='$loginip',session_id='{$_COOKIE["PHPSESSID"]}' where boss='$username'";
+    $loginsql="update #@__staff set logindate='$logindate',loginip='$loginip',session_id='{$_COOKIE["PHPSESSID"]}' where s_no='$username'";
     $lsql->executenonequery($loginsql);
     echo "<script language='javascript'>window.location.href='index.php';</script>";
     //header("Location:index.php");

@@ -14,15 +14,12 @@ if($action=='save'){
         exit();
     }
     $addsql="update #@__staff set s_no='$s_no',s_name='$s_name',s_address='$s_address',s_phone='$s_phone',s_part='$s_part',s_way='$s_way',s_money='$s_money',s_utype='$s_utype' where id='$id'";
-    $addsql2="update #@__boss set boss='$s_no',rank='$s_utype' where boss='$s_name_old'";
     $message= "社員：".$s_name."さんの情報を修正しました。";
     $loginip=getip();
     $logindate=getdatetimemk(time());
     $username=str_replace($cfg_cookie_encode,'',$_COOKIE["VioomaUserID"]);
     $asql=New Dedesql(false);
     $asql->ExecuteNoneQuery($addsql);
-    echo $addsql;
-    echo $addsql2;
     $asql->ExecuteNoneQuery($addsql2);
     $asql->ExecuteNoneQuery("insert into #@__recordline(message,date,ip,userid) values('{$message}','{$logindate}','{$loginip}','$username')");
     $asql->close();

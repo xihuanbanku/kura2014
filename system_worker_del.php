@@ -21,7 +21,6 @@ ShowMsg('不正操作','-1');
 else{
 	//echo $buser;
  $dsql->ExecuteNoneQuery("delete from #@__staff where id='$id'");
- $dsql->ExecuteNoneQuery("delete from #@__boss where boss='$buser'");
  WriteNote('社員情報を削除しました。',getdatetimemk(time()),getip(),$username);
  ShowMsg('社員情報を削除しました。','system_worker.php');
  }
