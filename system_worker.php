@@ -11,10 +11,9 @@ if ($action == 'save') {
         ShowMsg('社員名を入力してください。', '-1');
         exit();
     }
-    $addsql = "insert into #@__staff(s_no,s_name,s_address,s_phone,s_part,s_way,s_money,s_utype,s_duty) values('$s_no','$s_name','$s_address','$s_phone','$s_part','$s_way','$s_money','$s_utype','$s_utype')";
+    $addsql = "insert into #@__staff(s_no,s_name,s_address,s_phone,s_part,s_way,s_money,password) values('$s_no','$s_name','$s_address','$s_phone','$s_part','$s_way','$s_money','$password1')";
     $message = "社員" . $s_name . "さんを追加しました。";
     $password1 = md5($password);
-    $addsql2 = "insert into #@__boss(boss,password,logindate,loginip,rank,`key`,key1,code) values('$s_no','$password1','0000-00-00 00:00:00','','$s_utype','0','0','0')";
     $loginip = getip();
     $logindate = getdatetimemk(time());
     $username = GetCookie('VioomaUserID');
@@ -24,11 +23,11 @@ if ($action == 'save') {
         showmsg('エラー：' . $asql->getError(), '-1');
         exit();
     }
-    $rs1 = $asql->ExecuteNoneQuery($addsql2);
-    if (! $rs1) {
-        showmsg('エラー：' . $asql->getError(), '-1');
-        exit();
-    }
+//     $rs1 = $asql->ExecuteNoneQuery($addsql2);
+//     if (! $rs1) {
+//         showmsg('エラー：' . $asql->getError(), '-1');
+//         exit();
+//     }
     WriteNote($message, $logindate, $loginip, $username);
     showmsg('社員を追加しました。', 'system_worker.php');
     exit();
@@ -149,7 +148,7 @@ window.open('part_list.php?form=form1&field=s_part','selected','directorys=no,to
 } else {
     echo "<table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" id=\"table_border\" style=\"text-align:center;\">";
     $csql = new Dedesql(false);
-    $csql->SetQuery("select *, a.id id1 from #@__staff a, #@__boss b where a.s_no = b.boss ");
+    $csql->SetQuery("select a.*, b.typename from #@__staff a, #@__usertype b where a.s_utype=b.rank ");
     $csql->Execute();
     $rowcount = $csql->GetTotalRow();
     if ($rowcount == 0)
@@ -173,10 +172,10 @@ window.open('part_list.php?form=form1&field=s_part','selected','directorys=no,to
 	   <td>" . $row['s_address'] . "</td>
 	   <td>" . $row['s_phone'] . "</td>
 	   <td>" . $row['s_part'] . "</td>
-	   <td>" . getusertype($row['rank'], 0) . "</td>
+	   <td>" . $row['typename'] . "</td>
 	   <td>" . $row['logindate'] . "</td>
 	   <td>" . $row['loginip'] . "</td>
-	   <td><center><a href=system_worker_edit.php?id=" . $row['id1'] . ">修正</a> | <a href=system_worker_del.php?id=" . $row['id1'] . "&buser=" . $row['s_name'] . ">削除</a></td>
+	   <td><center><a href=system_worker_edit.php?id=" . $row['id'] . ">修正</a> | <a href=system_worker_del.php?id=" . $row['id'] . "&buser=" . $row['s_name'] . ">削除</a></td>
 	   </tr>";
         }
     }

@@ -14,7 +14,7 @@ if ($action == 'save') {
         showmsg('入力されたパスワードが一致しません。', '-1');
         exit();
     }
-    $equery = "select * from #@__boss where password='" . md5($password) . "' and id='$id'";
+    $equery = "select * from #@__staff where password='" . md5($password) . "' and id='$id'";
     $esql = new dedesql(false);
     $esql->setquery($equery);
     $esql->execute();
@@ -24,7 +24,7 @@ if ($action == 'save') {
         exit();
     }
     $row = $esql->getone();
-    $addsql = "update #@__boss set password='" . md5($password1) . "' where id='$id'";
+    $addsql = "update #@__staff set password='" . md5($password1) . "' where id='$id'";
     $message = "担当者" . $row['boss'] . "さんのパスワードが変更されました。";
     $loginip = getip();
     $logindate = getdatetimemk(time());
@@ -46,7 +46,7 @@ if ($action == 'save') {
 <body>
 <?php
 $esql = new Dedesql(false);
-$queryboss = "select * from #@__boss where boss='" . GetCookie('VioomaUserID') . "'";
+$queryboss = "select * from #@__staff where s_no='" . GetCookie('VioomaUserID') . "'";
 $esql->SetQuery($queryboss);
 $esql->Execute();
 if ($esql->GetTotalRow() == 0) {
@@ -77,7 +77,7 @@ $esql->close();
 									id="table_border">
 									<tr>
 										<td id="row_style">&nbsp;ユーザー名：</td>
-										<td>&nbsp;<font color='red'><?php echo $rs['boss'];?></font> <input
+										<td>&nbsp;<font color='red'><?php echo $rs['s_no'];?></font> <input
 											type="hidden" name="id" value="<?php echo $rs['id']; ?>"></td>
 									</tr>
 									<tr>
