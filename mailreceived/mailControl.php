@@ -1,4 +1,6 @@
 <?php
+require_once '../include/ez_sql_core.php';
+require_once '../include/ez_sql_mysql.php';
 /*
  * File: mailControl.php
  * Description: Received Mail Example
@@ -75,13 +77,14 @@ class mailControl {
 						$imageList[$file['title']]=$file['pathname'];
 					}
 				}
-				$body = $obj->getBody($i,$this->webPath,$imageList);
+				$body = iconv("gbk", "UTF-8", $obj->getBody($i,$this->webPath,$imageList));
 				
-				$res['mail'][]=array('head'=>$head,'body'=>$body,"attachList"=>$files);			 
-// 				$obj->deleteMails($i); // Delete Mail from Mail box
-        		$obj->move_mails($i,"testtest");
+				$res['mail'][]=array('head'=>$head,'body'=>$body,"attachList"=>$files);
+				$obj->deleteMails($i); // Delete Mail from Mail box
+//         		$obj->move_mails($i,"testtest");
 			}
 			$obj->close_mailbox();   //Close Mail Box
+    		$obj->save2DB($res);
 			return $res;
 		}
 	}

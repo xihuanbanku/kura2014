@@ -66,25 +66,25 @@ class receiveMail
     			{
     				$ccList[]=$v->mailbox.'@'.$v->host;
     			}
-    			$toList=array();
-    			foreach ($mail_header->to as $k => $v)
-    			{
-    				$toList[]=$v->mailbox.'@'.$v->host;
-    			}
-    			$ccList=implode(",", $ccList);
-    			$toList=implode(",", $toList);
-    			$mail_details=array(
-    					'fromBy'=>strtolower($sender->mailbox).'@'.$sender->host,
-    					'fromName'=>$this->decode_mime($sender->personal),
-    					'ccList'=>$ccList,//strtolower($sender_replyto->mailbox).'@'.$sender_replyto->host,
-    					'toNameOth'=>$this->decode_mime($sender_replyto->personal),
-    					'subject'=>$subject,
-    					'mailDate'=>date("Y-m-d H:i:s",$mail_header->udate),
-    					'udate'=>$mail_header->udate,
-    					'toList'=>$toList//strtolower($mail_header->to[0]->mailbox).'@'.$mail_header->to[0]->host
-    // 					'to'=>strtolower($mail_header->toaddress)
-    				);
-    		}
+			}
+			$toList=array();
+			foreach ($mail_header->to as $k => $v)
+			{
+				$toList[]=$v->mailbox.'@'.$v->host;
+			}
+			$ccList=implode(",", $ccList);
+			$toList=implode(",", $toList);
+			$mail_details=array(
+					'fromBy'=>strtolower($sender->mailbox).'@'.$sender->host,
+					'fromName'=>$this->decode_mime($sender->personal),
+					'ccList'=>$ccList,//strtolower($sender_replyto->mailbox).'@'.$sender_replyto->host,
+					'toNameOth'=>$this->decode_mime($sender_replyto->personal),
+					'subject'=>iconv("gbk", "utf-8", $subject),
+					'mailDate'=>date("Y-m-d H:i:s",$mail_header->udate),
+					'udate'=>$mail_header->udate,
+					'toList'=>$toList//strtolower($mail_header->to[0]->mailbox).'@'.$mail_header->to[0]->host
+// 					'to'=>strtolower($mail_header->toaddress)
+				);
 		}
 		return $mail_details;
 	}
@@ -374,5 +374,22 @@ class receiveMail
 		return date('Ym/dHis', time()) . $fileID . mt_rand(0, 10000) . '.' . $extension;
 	}
 	
+	/**
+	 * 将邮件内容保存到数据库
+	 * @param unknown $mails
+	 */
+	function save2DB($mails) {
+        $newsql = new ezSQL_mysql();
+        $count = 0;
+	    foreach ($mails["mail"] as $mail) {
+            $query = "insert into jxc_mails(`fromBy`, `fromName`, `ccList`, `toNameOth`, `toList`, `subject`, `mailDate`, `body`, `attachList`)
+                    values ('".$mail['head']["fromBy"]."', '".$mail['head']["fromName"]."', '".$mail['head']["ccList"]."', '".$mail['head']["toNameOth"]."', 
+                        '".$mail['head']["toList"]."',  '".$mail['head']["subject"]."',  '".$mail['head']["mailDate"]."', '".$mail['body']."', '".$mail['attachList']."')";
+            $count+=$newsql->query($query);
+	    }
+        
+        return $count;
+	    
+	}
 }
 ?>
