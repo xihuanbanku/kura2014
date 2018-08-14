@@ -21,8 +21,8 @@ class mailControl {
 	public $mailPasswd = "tes001001";
 	public $mailAddress = "test@p-mon.jp";
 	public $mailServer = "p-mon.xsrv.jp";
-	public $serverType = "pop3";
-	public $port = "995";
+	public $serverType = "imap";
+	public $port = "993";
 	public $ssl = true;
 	public $now       = 0;
 	public $savePath  = 'upload/';
@@ -80,8 +80,8 @@ class mailControl {
 				$body = iconv("gbk", "UTF-8", $obj->getBody($i,$this->webPath,$imageList));
 				
 				$res['mail'][]=array('head'=>$head,'body'=>$body,"attachList"=>$files);
-				$obj->deleteMails($i); // Delete Mail from Mail box
-//         		$obj->move_mails($i,"testtest");
+// 				$obj->deleteMails($i); // Delete Mail from Mail box
+        		$obj->move_mails($i,"testtest");
 			}
 			$obj->close_mailbox();   //Close Mail Box
     		$obj->save2DB($res);

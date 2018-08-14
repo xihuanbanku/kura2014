@@ -22,7 +22,7 @@ class receiveMail
 		if($servertype=='imap')
 		{
 			if($port=='') $port='143'; 
-			$strConnect='{'.$mailserver.':'.$port. '}INBOX'; 
+			$strConnect='{'.$mailserver.':'.$port. '/imap'.($ssl ? "/ssl" : "").'/novalidate-cert}INBOX'; 
 		}
 		else
 		{
@@ -257,7 +257,7 @@ class receiveMail
 			}
 		}
 		//move mail to taskMailBox
-		$this->move_mails($mid, $this->marubox);		
+// 		$this->move_mails($mid, $this->marubox);		
 
 		return $files;
 	}
@@ -274,7 +274,7 @@ class receiveMail
 			return "";
 		}
 		//处理图片
-		$body=$this->embed_images($body,$path,$imageList);
+// 		$body=$this->embed_images($body,$path,$imageList);
 		return $body;
 	}
 	
@@ -284,7 +284,6 @@ class receiveMail
 		preg_match_all('/<img.*?>/', $body, $matches);
 		if (!isset($matches[0])) return;
 		
-	    var_dump($matches);
 		foreach ($matches[0] as $img)
 		{
 			// replace image web path with local path
@@ -331,8 +330,9 @@ class receiveMail
 	{
 		if(!$this->marubox)
 			return false;
-	
-		imap_mail_move($this->marubox, $msglist, "testtest");
+		$move = "INBOX.moved";
+		echo "trying to move:" . $msglist . "<br>";
+		@imap_mail_move($this->marubox, $msglist, $move);
 	}
 	
 	function creat_mailbox($mailbox)
@@ -371,7 +371,7 @@ class receiveMail
 	 */
 	public function setPathName($fileID, $extension)
 	{
-		return date('Ym/dHis', time()) . $fileID . mt_rand(0, 10000) . '.' . $extension;
+		return "mail_".date('Y/mdHis_') . $fileID . mt_rand(0, 10000) . '.' . $extension;
 	}
 	
 	/**
@@ -380,11 +380,12 @@ class receiveMail
 	 */
 	function save2DB($mails) {
         $newsql = new ezSQL_mysql();
+        $_COOKIE["VioomaUserID"] = "checkmail";
         $count = 0;
 	    foreach ($mails["mail"] as $mail) {
             $query = "insert into jxc_mails(`fromBy`, `fromName`, `ccList`, `toNameOth`, `toList`, `subject`, `mailDate`, `body`, `attachList`)
                     values ('".$mail['head']["fromBy"]."', '".$mail['head']["fromName"]."', '".$mail['head']["ccList"]."', '".$mail['head']["toNameOth"]."', 
-                        '".$mail['head']["toList"]."',  '".$mail['head']["subject"]."',  '".$mail['head']["mailDate"]."', '".$mail['body']."', '".$mail['attachList']."')";
+                        '".$mail['head']["toList"]."',  '".$mail['head']["subject"]."',  '".$mail['head']["mailDate"]."', '".$mail['body']."', '".sizeof($mail['attachList'])."')";
             $count+=$newsql->query($query);
 	    }
         
