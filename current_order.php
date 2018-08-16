@@ -34,11 +34,10 @@ if($action=='del'){
 	   $csql->SetQuery("select * from #@__kc where rdh='$did' and tantousyaid='".GetCookie('VioomaUserID')."'");
 	   else
 	   $csql->SetQuery("select * from #@__kc where id<0 and tantousyaid='".GetCookie('VioomaUserID')."'");
-	   }
-	   else{
-	   if($action=='' && $did!=''){
-	   
-	   if($rk_price=='' || (!is_numeric($rk_price)))ShowMsg("仕入単価が正しくない","-1");
+	   } else {
+    	   if($action=='' && $did!=''){
+    	   
+    	       if($rk_price=='' || (!is_numeric($rk_price)))ShowMsg("仕入単価が正しくない","-1");
                 $wsql=New Dedesql(false);
                 $chksql = "select * from #@__kc where productid='$pid' and rdh='$did' and labid='$lid' and labfloor='$floor' and labshelf='$shelf'"
                         . " and labzone='$zone' and labhorizontal='$horizontal' and labvertical='$vertical' and tantousyaid='".GetCookie('VioomaUserID')."'";
@@ -60,8 +59,8 @@ if($action=='del'){
                             . "values('$pid','$num','$lid','$floor','$shelf','$zone','$horizontal','$vertical','$did','$rk_price','$bank','$bz','".GetDateTimeMk(time())."','".GetCookie('VioomaUserID')."')");
                 }
                 $wsql->close();
-	   }
-	   $csql->SetQuery("select * from #@__kc where rdh='$did' and tantousyaid='".GetCookie('VioomaUserID')."'");
+    	   }
+    	   $csql->SetQuery("select * from #@__kc where rdh='$did' and tantousyaid='".GetCookie('VioomaUserID')."'");
 	   }
 	   $csql->Execute();
 	   $rowcount=$csql->GetTotalRow();

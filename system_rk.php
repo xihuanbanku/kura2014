@@ -21,19 +21,17 @@ require_once(dirname(__FILE__)."/include/checklogin.php");
 </style>
 <script language="javascript">
 function isInteger(sNum) { 
-var num 
-num=new RegExp('[^0-9_]','') 
-if (isNaN(sNum)) { 
-return false 
-} 
-else { 
-if (sNum.search(num)>=0) { 
-return false 
-} 
-else { 
-return true 
-} 
-} 
+    var num 
+    num=new RegExp('[^0-9_]','') 
+    if (isNaN(sNum)) { 
+    	return false 
+    } else { 
+        if (sNum.search(num)>=0) { 
+        	return false 
+        } else { 
+        	return true 
+        } 
+    } 
 } 
 
 function getinfo(){
