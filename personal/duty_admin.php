@@ -274,6 +274,7 @@ if ($_FILES['inputExcelBuy']['size'] >0) {
     						  <input type="hidden" id="formHiddenInput" value="-1" name="user"/>
     							上传内容(导出文件后上传, 程序读取的是B,D,E列的内容, 注意确认当前员工账号):<input type="file" name="inputExcelBuy" id="inputExcelBuy"/><input type="submit" value="取込 "/>
     						</form>
+							考勤中只有"休假"是"无", 才会统计迟到/早退, 其他状态都不会统计
 						</td>
 					</tr>
 					<tr>
