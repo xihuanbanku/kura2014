@@ -184,13 +184,13 @@ if ($action == 'save') {
         while ($row = $bsql->getArray()) {
             $money += $row['number'] * $row['rk_price'];
             $csql = new dedesql(false);
-            $csql->setquery("select * from #@__mainkc where p_id='" . $row['productid'] . "' and l_id='" . $row['labid'] . "' and l_floor='" . $row['labfloor'] . "' and l_shelf='" . $row['labshelf'] . "' " . "and l_zone='" . $row['labzone'] . "' and l_horizontal='" . $row['labhorizontal'] . "' and l_vertical='" . $row['labvertical'] . "'");
+            $csql->setquery("select * from #@__mainkc where del_flag=0 and p_id='" . $row['productid'] . "' and l_id='" . $row['labid'] . "' and l_floor='" . $row['labfloor'] . "' and l_shelf='" . $row['labshelf'] . "' " . "and l_zone='" . $row['labzone'] . "' and l_horizontal='" . $row['labhorizontal'] . "' and l_vertical='" . $row['labvertical'] . "'");
             $csql->execute();
             $totalrec = $csql->gettotalrow();
             if ($totalrec == 0)
-                $rs = $csql->executenonequery("insert into #@__mainkc(p_id,l_id,d_id,number,l_floor,l_shelf,l_zone,l_horizontal,l_vertical,dtime) " . "values('" . $row['productid'] . "','" . $row['labid'] . "','0','" . $row['number'] . "','" . $row['labfloor'] . "'," . "'" . $row['labshelf'] . "','" . $row['labzone'] . "','" . $row['labhorizontal'] . "','" . $row['labvertical'] . "','" . GetDateTimeMk(time()) . "')");
+                $rs = $csql->executenonequery("insert into #@__mainkc(p_id,l_id,d_id,number,l_floor,l_shelf,l_zone,l_horizontal,l_vertical,dtime,del_flag) " . "values('" . $row['productid'] . "','" . $row['labid'] . "','0','" . $row['number'] . "','" . $row['labfloor'] . "'," . "'" . $row['labshelf'] . "','" . $row['labzone'] . "','" . $row['labhorizontal'] . "','" . $row['labvertical'] . "','" . GetDateTimeMk(time()) . "', 0)");
             else
-                $rs = $csql->executenonequery("update #@__mainkc set number=number+" . $row['number'] . ",dtime='" . GetDateTimeMk(time()) . "' where p_id='" . $row['productid'] . "' " . "and l_id='" . $row['labid'] . "' and l_floor='" . $row['labfloor'] . "' and l_shelf='" . $row['labshelf'] . "' " . "and l_zone='" . $row['labzone'] . "' and l_horizontal='" . $row['labhorizontal'] . "' and l_vertical='" . $row['labvertical'] . "'");
+                $rs = $csql->executenonequery("update #@__mainkc set number=number+" . $row['number'] . ",dtime='" . GetDateTimeMk(time()) . "' where del_flag=0 and p_id='" . $row['productid'] . "' " . "and l_id='" . $row['labid'] . "' and l_floor='" . $row['labfloor'] . "' and l_shelf='" . $row['labshelf'] . "' " . "and l_zone='" . $row['labzone'] . "' and l_horizontal='" . $row['labhorizontal'] . "' and l_vertical='" . $row['labvertical'] . "'");
         }
         if (! $rs) {
             showmsg("エラー" . $csql->getError(), "-1");
@@ -524,7 +524,7 @@ if($thistm!=''){
 	echo $thistm;
 	$checksql=new Dedesql(false);
 	$checkquery="select basic.*, main.* from #@__basic basic left join #@__mainkc main "
-                . "on main.p_id = basic.cp_number and main.l_id = '$labid' where basic.cp_tm='$thistm'";
+                . "on main.p_id = basic.cp_number and main.l_id = '$labid' where basic.cp_tm='$thistm' and main.del_flag=0";
 	$checksql->setquery($checkquery);
 	$checksql->execute();
 	$recordnumbers=$checksql->getTotalRow();
