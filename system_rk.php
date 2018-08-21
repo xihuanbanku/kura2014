@@ -184,13 +184,14 @@ if ($action == 'save') {
         while ($row = $bsql->getArray()) {
             $money += $row['number'] * $row['rk_price'];
             $csql = new dedesql(false);
-            $csql->setquery("select * from #@__mainkc where del_flag=0 and p_id='" . $row['productid'] . "' and l_id='" . $row['labid'] . "' and l_floor='" . $row['labfloor'] . "' and l_shelf='" . $row['labshelf'] . "' " . "and l_zone='" . $row['labzone'] . "' and l_horizontal='" . $row['labhorizontal'] . "' and l_vertical='" . $row['labvertical'] . "'");
+            echo "action=save<br/>";
+            $csql->setquery("select * from #@__mainkc where p_id='" . $row['productid'] . "' and l_id='" . $row['labid'] . "' and l_floor='" . $row['labfloor'] . "' and l_shelf='" . $row['labshelf'] . "' " . "and l_zone='" . $row['labzone'] . "' and l_horizontal='" . $row['labhorizontal'] . "' and l_vertical='" . $row['labvertical'] . "'");
             $csql->execute();
             $totalrec = $csql->gettotalrow();
             if ($totalrec == 0)
-                $rs = $csql->executenonequery("insert into #@__mainkc(p_id,l_id,d_id,number,l_floor,l_shelf,l_zone,l_horizontal,l_vertical,dtime,del_flag) " . "values('" . $row['productid'] . "','" . $row['labid'] . "','0','" . $row['number'] . "','" . $row['labfloor'] . "'," . "'" . $row['labshelf'] . "','" . $row['labzone'] . "','" . $row['labhorizontal'] . "','" . $row['labvertical'] . "','" . GetDateTimeMk(time()) . "', 0)");
+                $rs = $csql->executenonequery("insert into #@__mainkc(p_id,l_id,d_id,number,l_floor,l_shelf,l_zone,l_horizontal,l_vertical,dtime) " . "values('" . $row['productid'] . "','" . $row['labid'] . "','0','" . $row['number'] . "','" . $row['labfloor'] . "'," . "'" . $row['labshelf'] . "','" . $row['labzone'] . "','" . $row['labhorizontal'] . "','" . $row['labvertical'] . "','" . GetDateTimeMk(time()) . "')");
             else
-                $rs = $csql->executenonequery("update #@__mainkc set number=number+" . $row['number'] . ",dtime='" . GetDateTimeMk(time()) . "' where del_flag=0 and p_id='" . $row['productid'] . "' " . "and l_id='" . $row['labid'] . "' and l_floor='" . $row['labfloor'] . "' and l_shelf='" . $row['labshelf'] . "' " . "and l_zone='" . $row['labzone'] . "' and l_horizontal='" . $row['labhorizontal'] . "' and l_vertical='" . $row['labvertical'] . "'");
+                $rs = $csql->executenonequery("update #@__mainkc set number=number+" . $row['number'] . ",dtime='" . GetDateTimeMk(time()) . "' where p_id='" . $row['productid'] . "' " . "and l_id='" . $row['labid'] . "' and l_floor='" . $row['labfloor'] . "' and l_shelf='" . $row['labshelf'] . "' " . "and l_zone='" . $row['labzone'] . "' and l_horizontal='" . $row['labhorizontal'] . "' and l_vertical='" . $row['labvertical'] . "'");
         }
         if (! $rs) {
             showmsg("エラー" . $csql->getError(), "-1");
@@ -214,6 +215,7 @@ exit();
     }
 }
 else if($action=='seek'){
+            echo "action=save<br/>";
 ?>
 <body>
 	<table width="100%" border="0" id="table_style_all" cellpadding="0"
@@ -324,6 +326,7 @@ $orderstring=" order by r_date desc";
 </table>";
  }
  else if($action=='sure'){
+            echo "action=sure<br/>";
  $susql=new dedesql(false);
  if($t=='yes')
  $query="update #@__reportrk set r_status=1 where id='$id'";
@@ -334,6 +337,7 @@ $orderstring=" order by r_date desc";
  showmsg('審査状態を変更しました。','system_rk.php?action=seek');
  }
  else{
+            echo "action=sure<br/>";
 ?>
 <body onload="form1.tm.focus()">
 								<table width="100%" border="0" id="table_style_all"
@@ -521,21 +525,23 @@ $orderstring=" order by r_date desc";
 								</table>
 <?php 
 if($thistm!=''){
+    // 判断barcode是否在mainkc中
 	echo $thistm;
 	$checksql=new Dedesql(false);
 	$checkquery="select basic.*, main.* from #@__basic basic left join #@__mainkc main "
-                . "on main.p_id = basic.cp_number and main.l_id = '$labid' where basic.cp_tm='$thistm' and main.del_flag=0";
+                . "on main.p_id = basic.cp_number and main.l_id = '$labid' where basic.cp_tm='$thistm'";
 	$checksql->setquery($checkquery);
 	$checksql->execute();
 	$recordnumbers=$checksql->getTotalRow();
 	if($recordnumbers == 0){
+	    // mainkc中不存在, 重新输入
 		?>
 		<script language="javascript">
 		 document.forms[0].tm.focus();
 		</script>
 		<?php 
-	}
-	else{
+	} else{
+	    // mainkc中存在, 在iframe里面显示出来
 		$row=$checksql->getone();
 		?>
 		<script lanugage="javascript">
