@@ -29,6 +29,9 @@ date_default_timezone_set('PRC');
         case "updateRemark3":
             $result = updateRemark3();
             break;
+        case "1":
+            $result = "";
+            break;
         default:
             $result = "error";
         break;
@@ -135,6 +138,36 @@ date_default_timezone_set('PRC');
         return $count;
     }
 	
+    /**
+     * 上传文件
+     * @param unknown $pageId
+     * @param unknown $file
+     * @param unknown $filetempname
+     * @return multitype:number string
+     */
+    function uploadFile($pageId, $file, $filetempname) {
+        $importStat=array("n"=>0,"u"=>0,"d"=>0,"e"=>0,"m"=>0,"filename"=>0);
+        // 自己设置的上传文件存放路径
+        $filePath = '/home/p-mon/pmon.jp/public_html/kura2014/upload/';
+        $str = "";
+        // 下面的路径按照你PHPExcel的路径来修改
+        set_include_path('/home/p-mon/pmon.jp/public_html/kura2014/PHPExcel'.PATH_SEPARATOR.get_include_path());
+    
+        $filename = explode(".", $file); // 把上传的文件名以“.”好为准做一个数组。
+        $time = date("Ymd-H_i_s"); // 去当前上传的时间
+        $filename[0] .= $time; // 取文件名连接当前时间 xxx20180901-01_01_01.txt的形式
+        $name = implode(".", $filename); // 上传后的文件名
+        $uploadfile = $filePath . "Notice.xlsx"; // 上传后的文件名地址
+        // move_uploaded_file() 函数将上传的文件移动到新位置。若成功，则返回 true，否则返回 false。
+        $result = move_uploaded_file($filetempname, $uploadfile); // 假如上传到当前目录下
+        if ($result) {
+            $importStat["filename"] = $time;
+        } else {
+            $importStat["m"] = 5;
+        }
+    
+        return $importStat;
+    }
     /**
      * 导出excel
      * @return Ambigous <boolean, number, mixed>

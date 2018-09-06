@@ -144,12 +144,63 @@ function initPage() {
 }
 </style>
 </head>
+<?php
+if ($_FILES['inputExcelBuy']['size'] >0) {
+	require_once '../service/NoticeService.class.php';
+    // 获取上传的文件名
+    $filename = $_FILES['inputExcelBuy']['name'];
+    // 上传到服务器上的临时文件名
+    $tmp_name = $_FILES['inputExcelBuy']['tmp_name'] ;
+    // 上传顺序,区分当前页面的id
+    $pageId = $_REQUEST["pageId"] ;
+    $msg = uploadFile("admin", $filename, $tmp_name);
+    switch ($msg["m"]) {
+        case 0:
+            echo "文件上传成功<br/>";
+        break;
+        case 1:
+            echo "<br/><font color='red'>导入失败</font><br/>";
+        break;
+        case 2:
+            echo "<br/><font color='red'>更新失败</font><br/>";
+        break;
+        case 3:
+            echo "<br/><font color='red'>删除失败</font><br/>";
+        break;
+        case 4:
+            echo "<br/><font color='red'>操作类型错误</font><br/>";
+        break;
+        case 5:
+            echo "<br/><font color='red'>excel上传失败</font><br/>";
+        break;
+        
+        default:
+           echo "system error" ;
+        break;
+    }
+//    echo "上传{$msg["n"]}件<br/>";
+//    echo "更新{$msg["u"]}件<br/>";
+//    echo "删除{$msg["d"]}件<br/>";
+}
+
+?>
 <body>
 <table width="100%" border="0" id="table_style_all" cellpadding="0" cellspacing="0">
   <tr>
     <td id="table_style" class="l_t">&nbsp;</td>
     <td>&nbsp;</td>
     <td id="table_style" class="r_t">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+  	<td>
+  		<form name="form2"  method="post" enctype="multipart/form-data" >
+  			<input type="hidden" name="flag" value="1"/>
+  			上传文件:<input type="file" name="inputExcelBuy" id="inputExcelBuy"/><input type="submit" value="取込 "/>
+		<a href="../upload/Notice.xlsx">下载附件</a>
+  		</form>
+  	</td>
+    <td>&nbsp;</td>
   </tr>
   <tr>
     <td>&nbsp;</td>
