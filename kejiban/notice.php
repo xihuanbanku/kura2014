@@ -133,7 +133,7 @@ function initPage() {
 </style>
 </head>
 <?php
-if (sizeof($_REQUEST) >0) {
+if (sizeof($_REQUEST["replyTitle"]) >0) {
 	require_once '../service/NoticeService.class.php';
     // 获取上传的文件名
     $filename = $_FILES['inputExcelBuy']['name'];
