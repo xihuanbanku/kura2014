@@ -72,7 +72,7 @@ function initPage() {
             	$("#note_td div a").each(function(i, item){
     			    //alert($(item));
     		        $(item).click(function(){
-    		        	if(confirm("删除?")) {
+    		        	if($(item).html()=="X" && confirm("删除?")) {
         		        	$.ajax({
         		        		type: "post",
         		        		url: url+"?" + $(item).serialize(),
