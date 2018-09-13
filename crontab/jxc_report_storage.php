@@ -27,7 +27,7 @@ require_once '../include/ez_sql_mysql.php';
 					)
 							SELECT
 								a.p_id,
-		sum(a.number),
+		a.number,
 	sum(b.number),
 	sum(c.number),
 								'{$time}'
@@ -36,7 +36,7 @@ require_once '../include/ez_sql_mysql.php';
 							LEFT JOIN jxc_kc b ON a.p_id = b.productid
 							AND SUBSTR(b.dtime FROM 1 FOR 10) = '{$time}'
 							LEFT JOIN jxc_sale c ON a.p_id = c.productid
-							AND SUBSTR(b.dtime FROM 1 FOR 10) = SUBSTR(c.dtime FROM 1 FOR 10)
+							AND SUBSTR(b.dtime FROM 1 FOR 10) = '{$time}'
 							group by a.p_id
 						";
         return $newsql->query($insert);
