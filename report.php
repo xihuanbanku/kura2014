@@ -36,8 +36,8 @@ require_once(dirname(__FILE__)."/include/checklogin.php");
 		   <tr height="80"><td><a href="report_b_gys.php?type=day"><img src="images/report_3.gif" border="0" align="absmiddle"/></a></td></tr>
 		   <tr height="80"><td><a href="report_gys.php"><img src="images/report_5.gif" border="0" align="absmiddle"/></a></td></tr>
 		   <tr height="80"><td><a href="report_sale2.php">【仕入れ表】</a></td></tr>
-		   <tr height="80"><td><a href="report_sale.php?s_type=1">【Vender Amazon report贩卖】</a></td></tr>
-		   <tr height="80"><td><a href="report_rk.php?s_type=1">【Vender Amazon report入库】</a></td></tr>
+		   <!-- <tr height="80"><td><a href="report_sale.php?s_type=1">【Vender Amazon report贩卖】</a></td></tr>
+		   <tr height="80"><td><a href="report_rk.php?s_type=1">【Vender Amazon report入库】</a></td></tr> -->
 		  </table>
 		 </td>
 		 <td width="30%" align="center" style="background:url(images/bg.gif) no-repeat center"><a href="system_kc.php"><img src="images/database.gif" border="0" align="absmiddle"/></a></td>
