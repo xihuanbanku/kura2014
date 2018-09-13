@@ -39,7 +39,7 @@ date_default_timezone_set('PRC');
     echo $result;  
     
     function initPage() {
-        $query = "select a.id, a.title, a.content from jxc_notice a where del_flag=0 order by a.title";
+        $query = "select a.id, a.title, a.content, a.filename from jxc_notice a where del_flag=0 order by a.title";
         $newsql = new ezSQL_mysql();
         $results = $newsql->get_results($query);
 		$total = initPageCount();
@@ -52,14 +52,14 @@ date_default_timezone_set('PRC');
         $newsql = new ezSQL_mysql();
         return $newsql->get_var($query);
     }
-    function insert() {
-        $title   = $_REQUEST["title"];
-        $content = $_REQUEST["content"];
-        $owner  = $_REQUEST["owner"];
+    function insert($filename) {
+        $title   = $_REQUEST["replyTitle"];
+        $content = $_REQUEST["replyContent"];
+        $owner  = $_COOKIE["userID"];
         
         $newsql = new ezSQL_mysql();
-        $query = "INSERT INTO `jxc_notice` (`title`, `content`, `owner`)
-            values('$title','$content','$owner')";
+        $query = "INSERT INTO `jxc_notice` (`title`, `content`, `owner`, filename)
+            values('$title','$content','$owner', '$filename')";
         $result = $newsql->query($query) or mysql_error();
         return $result;
     }
@@ -147,25 +147,31 @@ date_default_timezone_set('PRC');
      */
     function uploadFile($pageId, $file, $filetempname) {
         $importStat=array("n"=>0,"u"=>0,"d"=>0,"e"=>0,"m"=>0,"filename"=>0);
-        // 自己设置的上传文件存放路径
-        $filePath = '/home/p-mon/pmon.jp/public_html/kura2014/upload/';
-        $str = "";
-        // 下面的路径按照你PHPExcel的路径来修改
-        set_include_path('/home/p-mon/pmon.jp/public_html/kura2014/PHPExcel'.PATH_SEPARATOR.get_include_path());
-    
-        $filename = explode(".", $file); // 把上传的文件名以“.”好为准做一个数组。
-        $time = date("Ymd-H_i_s"); // 去当前上传的时间
-        $filename[0] .= $time; // 取文件名连接当前时间 xxx20180901-01_01_01.txt的形式
-        $name = implode(".", $filename); // 上传后的文件名
-        $uploadfile = $filePath . "Notice.xlsx"; // 上传后的文件名地址
-        // move_uploaded_file() 函数将上传的文件移动到新位置。若成功，则返回 true，否则返回 false。
-        $result = move_uploaded_file($filetempname, $uploadfile); // 假如上传到当前目录下
-        if ($result) {
-            $importStat["filename"] = $time;
+        if(!empty($file)) {
+            // 自己设置的上传文件存放路径
+            $filePath = '/home/p-mon/pmon.jp/public_html/kura2014/upload/';
+            $str = "";
+            // 下面的路径按照你PHPExcel的路径来修改
+            set_include_path('/home/p-mon/pmon.jp/public_html/kura2014/PHPExcel'.PATH_SEPARATOR.get_include_path());
+        
+            $filename = explode(".", $file); // 把上传的文件名以“.”好为准做一个数组。
+            $time = date("Ymd-H_i_s"); // 去当前上传的时间
+            $filename[0] .= $time; // 取文件名连接当前时间 xxx20180901-01_01_01.txt的形式
+            $name = implode(".", $filename); // 上传后的文件名
+            $uploadfile = $filePath . $name; // 上传后的文件名地址
+            // move_uploaded_file() 函数将上传的文件移动到新位置。若成功，则返回 true，否则返回 false。
+            $result = move_uploaded_file($filetempname, $uploadfile); // 假如上传到当前目录下
+            if ($result) {
+                $importStat["filename"] = $time;
+            } else {
+                $importStat["m"] = 5;
+            }
         } else {
-            $importStat["m"] = 5;
+            $importStat["m"] = 6;
         }
-    
+
+        // 插入数据库
+        insert($name);
         return $importStat;
     }
     /**

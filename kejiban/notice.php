@@ -34,31 +34,13 @@ $(function(){
 	});
 	//textarea 使用ctrl+enter提交
     $("#replyContent").ctrlEnter("#replySubmit", function () {
-    	var replyContent= $("#replyContent").val();
+        var replyContent= $("#replyContent").val();
     	var replyTitle= $("#replyTitle").val();
-    	if(replyTitle.trim() == "" || replyContent.trim() == "") {
+    	if($.trim(replyTitle) == "" || $.trim(replyContent) == "") {
 			alert("请输入标题和内容");
-			return;
+			return false;
 	   	}
-    	$.ajax({
-    		type: "post",
-    		url: url,
-    		data: {"flag":"insert", 
-    			"title": replyTitle,
-    			"content": replyContent,
-    			"owner": '<?php echo $_COOKIE["userID"];?>'},
-    		success: function(msg){
-        		var html = "";
-    			if(msg > 0) {
-    				$("#replyTitle").val("");
-    				$("#replyContent").val("");
-    				alert("成功");
-    			    initPage();
-    			} else {
-    				alert("失败");
-    			}
-    		}
-    	});
+	   	$("#form2").submit();
  	});
     initPage();
 });
@@ -71,10 +53,16 @@ function initPage() {
 			data = eval("("+data+")");
 			if(data.results!= null) {
         		var html="";
+        		var attachFile="";
 				$.each(data.results, function(i, item){
     			    //alert($(item));
+    			    if(item.filename != null && item.filename != "") {
+    			    	attachFile="<a href='../upload/" + item.filename + "'>下载附件</a>";
+    			    } else {
+    			    	attachFile="";
+    			    }
 					html+="<div data-nid=" + item.id + ">"
-                		+"    [<a href='javascript:void(0);'>X</a>]<span class='title'>" + item.title + "</span><input name='title' type='text' style='display: none;' value='" + item.title + "' /><br />"
+                		+"    [<a href='javascript:void(0);'>X</a>]<span class='title'>" + item.title + "</span><input name='title' type='text' style='display: none;' value='" + item.title + "' />" + attachFile + "<br />"
                 		+"    <span class='content'>" + item.content.replace(/\n/g,"<br />") + "</span><textarea rows='10' cols='100' name='content' style='display: none;' >" + item.content + "</textarea>"
                 		+"</div>"
                 		+"<hr />";
@@ -84,7 +72,7 @@ function initPage() {
             	$("#note_td div a").each(function(i, item){
     			    //alert($(item));
     		        $(item).click(function(){
-    		        	if(confirm("删除?")) {
+    		        	if($(item).html()=="X" && confirm("删除?")) {
         		        	$.ajax({
         		        		type: "post",
         		        		url: url+"?" + $(item).serialize(),
@@ -145,14 +133,12 @@ function initPage() {
 </style>
 </head>
 <?php
-if ($_FILES['inputExcelBuy']['size'] >0) {
+if (sizeof($_REQUEST["replyTitle"]) >0) {
 	require_once '../service/NoticeService.class.php';
     // 获取上传的文件名
     $filename = $_FILES['inputExcelBuy']['name'];
     // 上传到服务器上的临时文件名
     $tmp_name = $_FILES['inputExcelBuy']['tmp_name'] ;
-    // 上传顺序,区分当前页面的id
-    $pageId = $_REQUEST["pageId"] ;
     $msg = uploadFile("admin", $filename, $tmp_name);
     switch ($msg["m"]) {
         case 0:
@@ -172,6 +158,9 @@ if ($_FILES['inputExcelBuy']['size'] >0) {
         break;
         case 5:
             echo "<br/><font color='red'>excel上传失败</font><br/>";
+        break;
+        case 6:
+            echo "<br/><font color='red'>提交成功</font><br/>";
         break;
         
         default:
@@ -193,17 +182,6 @@ if ($_FILES['inputExcelBuy']['size'] >0) {
   </tr>
   <tr>
     <td>&nbsp;</td>
-  	<td>
-  		<form name="form2"  method="post" enctype="multipart/form-data" >
-  			<input type="hidden" name="flag" value="1"/>
-  			上传文件:<input type="file" name="inputExcelBuy" id="inputExcelBuy"/><input type="submit" value="取込 "/>
-		<a href="../upload/Notice.xlsx">下载附件</a>
-  		</form>
-  	</td>
-    <td>&nbsp;</td>
-  </tr>
-  <tr>
-    <td>&nbsp;</td>
     <td id="note_td">
 	</td>
     <td>&nbsp;</td>
@@ -212,10 +190,15 @@ if ($_FILES['inputExcelBuy']['size'] >0) {
     <td>&nbsp;</td>
     <td style="display: none;" id="replyTd">
         <div>
-            <input placeholder="标题" id="replyTitle" type="text"/><br/>
-            <textarea rows="10" cols="100" id="replyContent"></textarea>
+      		<form id="form2"  method="post" enctype="multipart/form-data">
+      		    <input type="hidden" name="flag" value="1"/>
+                <input placeholder="标题" name="replyTitle" id="replyTitle" type="text"/><br/>
+                <textarea rows="10" cols="100" name="replyContent" id="replyContent"></textarea><br/>
+      			上传文件:<input type="file" name="inputExcelBuy" id="inputExcelBuy"/><br/>
+                <input type="submit" id="replySubmit" value="提交 "/>
+      		</form>
         </div>
-        <button id="replySubmit">提交</button><span>可按"Ctrl+Enter"键提交</span>
+<!--         <button id="replySubmit">提交</button><span>可按"Ctrl+Enter"键提交</span> -->
     </td>
     <td>&nbsp;</td>
   </tr>
