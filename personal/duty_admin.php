@@ -27,7 +27,7 @@ $(function(){
 		thisMonth++;
 	}
 	//获取当前月份(0-11,0代表1月)
-	if(thisMonth < 10) {
+	if(thisMonth < 9) {
 		$("select[name='dutyMonth']").val("0"+(thisMonth+1));
 	} else {
 		$("select[name='dutyMonth']").val(thisMonth+1);
