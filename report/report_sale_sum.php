@@ -41,11 +41,12 @@ function trimStr(str){return str.replace(/(^\s*)|(\s*$)/g,"");}
         ],
         function (ec) {
             // 基于准备好的dom，初始化echarts图表
-            myChart = ec.init(document.getElementById('main')); 
+            myChart = ec.init(document.getElementById('main'));
+            myChart2 = ec.init(document.getElementById('main2'));
             
             var option = {
 			title:{
-			text:"庫存报告"},
+			text:"贩卖渠道汇总"},
                 tooltip: {
                     show: true,
 					showContent: true,
@@ -62,7 +63,7 @@ function trimStr(str){return str.replace(/(^\s*)|(\s*$)/g,"");}
                     }
                 },
                 legend: {
-                    data:['在库数', '入库数', '出库数']
+                    data:['全部', '検済', 'サイト検済', '工場検済', 'amazon', 'rakuten', '', 'Vendor']
                 },
                 xAxis : [
                     {
@@ -78,56 +79,127 @@ function trimStr(str){return str.replace(/(^\s*)|(\s*$)/g,"");}
                 ],
                 series :  [
 			        {
-			            name:'在库数',
+			            name:'全部',
 			            type:'line',
 			            data:[0]
-//				            markPoint : {
-//				                data : [
-//				                    {type : 'max', name: '最大值'},
-//				                    {type : 'min', name: '最小值'}
-//				                ]
-//				            },
-//				            markLine : {
-//				                data : [
-//				                    {type : 'average', name: '平均'}
-//				                ]
-//				            }
 			        },
 			        {
-			            name:'入库数',
+			            name:'検済',
 			            type:'line',
 			            data:[0]
-//				            markPoint : {
-//				                data : [
-//				                    {name : '最小', type : 'min'}
-//				                ]
-//				            },
-//				            markLine : {
-//				                data : [
-//				                    {type : 'average', name : '平均'}
-//				                ]
-//				            }
 			        },
 			        {
-			            name:'出库数',
+			            name:'サイト検済',
 			            type:'line',
 			            data:[0]
-//				            markPoint : {
-//				                data : [
-//				                    {name : '最小', type : 'min'}
-//				                ]
-//				            },
-//				            markLine : {
-//				                data : [
-//				                    {type : 'average', name : '平均'}
-//				                ]
-//				            }
+			        },
+			        {
+			            name:'工場検済',
+			            type:'line',
+			            data:[0]
+			        },
+			        {
+			            name:'amazon',
+			            type:'line',
+			            data:[0]
+			        },
+			        {
+			            name:'rakuten',
+			            type:'line',
+			            data:[0]
+			        },
+			        {
+			            name:'yahooshopping',
+			            type:'line',
+			            data:[0]
+			        },
+			        {
+			            name:'Vendor',
+			            type:'line',
+			            data:[0]
+			        }
+			    ]
+            };
+            var option2 = {
+			title:{
+			text:"贩卖渠道金额汇总"},
+                tooltip: {
+                    show: true,
+					showContent: true,
+					trigger: 'axis'
+                },
+                toolbox: {
+                    show : true,
+                    feature : {
+                        mark : {show: true},
+                        dataView : {show: true, readOnly: false},
+                        magicType : {show: true, type: ['line', 'bar']},
+                        restore : {show: true},
+                        saveAsImage : {show: true}
+                    }
+                },
+                legend: {
+                    data:['全部', '検済', 'サイト検済', '工場検済', 'amazon', 'rakuten', '', 'Vendor']
+                },
+                xAxis : [
+                    {
+                        type : 'category',
+                        boundaryGap : false,
+                        data : [0]
+                    }
+                ],
+                yAxis : [
+                    {
+                        type : 'value'
+                    }
+                ],
+                series :  [
+			        {
+			            name:'全部',
+			            type:'line',
+			            data:[0]
+			        },
+			        {
+			            name:'検済',
+			            type:'line',
+			            data:[0]
+			        },
+			        {
+			            name:'サイト検済',
+			            type:'line',
+			            data:[0]
+			        },
+			        {
+			            name:'工場検済',
+			            type:'line',
+			            data:[0]
+			        },
+			        {
+			            name:'amazon',
+			            type:'line',
+			            data:[0]
+			        },
+			        {
+			            name:'rakuten',
+			            type:'line',
+			            data:[0]
+			        },
+			        {
+			            name:'yahooshopping',
+			            type:'line',
+			            data:[0]
+			        },
+			        {
+			            name:'Vendor',
+			            type:'line',
+			            data:[0]
 			        }
 			    ]
             };
     
             // 为echarts对象加载数据 
             myChart.setOption(option); 
+            myChart2.setOption(option2); 
         }
     );
 function load() {
@@ -143,14 +215,60 @@ function load() {
 		success: function(data){
     		var myOpt = myChart.getOption();
 			myChart.clear();
+    		var myOpt2 = myChart2.getOption();
+			myChart2.clear();
 			if(trimStr(data) != "null") {
     			data = eval("("+data+")");
-    			var s_count = new Array();
-    			var in_count = new Array();
-    			var out_count = new Array();
+    			var c_67 = new Array();
+    			var c_68 = new Array();
+    			var c_69 = new Array();
+    			var c_74 = new Array();
+    			var c_75 = new Array();
+    			var c_76 = new Array();
+    			var c_77 = new Array();
+    			var count_sum = new Array();
+    			var s_67 = new Array();
+    			var s_68 = new Array();
+    			var s_69 = new Array();
+    			var s_74 = new Array();
+    			var s_75 = new Array();
+    			var s_76 = new Array();
+    			var s_77 = new Array();
+    			var sale_sum = new Array();
     			var dates = Array();
     			$.each(data, function(entryIndex, entry){
     	//     		alert(entry.url+"|"+entry.loc);
+    		    	switch(entry.state_id) {
+    		    	case 67:
+    		    	    c_67.push(entry.count_sum);
+    		    	    s_67.push(entry.sale_sum);
+    		    	    break;
+    		    	case 68:
+    		    	    c_68.push(entry.count_sum);
+    		    	    s_68.push(entry.sale_sum);
+    		    	    break;
+    		    	case 69:
+    		    	    c_69.push(entry.count_sum);
+    		    	    s_69.push(entry.sale_sum);
+    		    	    break;
+    		    	case 74:
+    		    	    c_74.push(entry.count_sum);
+    		    	    s_74.push(entry.sale_sum);
+    		    	    break;
+    		    	case 75:
+    		    	    c_75.push(entry.count_sum);
+    		    	    s_75.push(entry.sale_sum);
+    		    	    break;
+    		    	case 76:
+    		    	    c_76.push(entry.count_sum);
+    		    	    s_76.push(entry.sale_sum);
+    		    	    break;
+    		    	case 77:
+    		    	    c_77.push(entry.count_sum);
+    		    	    s_77.push(entry.sale_sum);
+    		    	    break;
+
+    		    	}
     				s_count.push(entry.s_count);
     				in_count.push(entry.in_count);
     				out_count.push(entry.out_count);
@@ -202,6 +320,12 @@ function out_excel(){
                 				<td>
                                     <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
                                     <div id="main" style="height:400px"></div>
+                                </td>
+                			</tr>
+                			<tr id="simple_rk_priv_out2">
+                				<td>
+                                    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+                                    <div id="main2" style="height:400px"></div>
                                 </td>
                 			</tr>
             			 </table>
