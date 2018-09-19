@@ -20,8 +20,10 @@ require_once("../include/checklogin.php");
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 </style>
+<link href="../style/loading.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript" src="http://www.w3school.com.cn/jquery/jquery.js"></script>
+<script type="text/javascript" src="../js/loading.js?r=<?php echo rand()?>"></script>
 <script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
 <script type="text/javascript">
 function trimStr(str){return str.replace(/(^\s*)|(\s*$)/g,"");}
@@ -63,7 +65,7 @@ function trimStr(str){return str.replace(/(^\s*)|(\s*$)/g,"");}
                     }
                 },
                 legend: {
-                    data:['全部', '検済', 'サイト検済', '工場検済', 'amazon', 'rakuten', '', 'Vendor']
+                    data:['全部', '検済', 'サイト検済', '工場検済', 'amazon', 'rakuten', 'yahooshopping', 'Vendor']
                 },
                 xAxis : [
                     {
@@ -139,7 +141,7 @@ function trimStr(str){return str.replace(/(^\s*)|(\s*$)/g,"");}
                     }
                 },
                 legend: {
-                    data:['全部', '検済', 'サイト検済', '工場検済', 'amazon', 'rakuten', '', 'Vendor']
+                    data:['全部', '検済', 'サイト検済', '工場検済', 'amazon', 'rakuten', 'yahooshopping', 'Vendor']
                 },
                 xAxis : [
                     {
@@ -199,15 +201,12 @@ function trimStr(str){return str.replace(/(^\s*)|(\s*$)/g,"");}
     
             // 为echarts对象加载数据 
             myChart.setOption(option); 
-            myChart2.setOption(option2); 
+            myChart2.setOption(option2);
         }
     );
 function load() {
-	if(trimStr($("input[name=stext]").val()) == "") {
-		alert("关键字不能为空");
-		return;
-	}
 	var param = $("input").serialize();
+     showLoading();
 	$.ajax({
 		type: "post",
 		url: "../service/ReportService.class.php?" + param,
@@ -236,51 +235,83 @@ function load() {
     			var s_77 = new Array();
     			var sale_sum = new Array();
     			var dates = Array();
+               var temp_count_sum = 0;
+               var temp_sale_sum = 0;
     			$.each(data, function(entryIndex, entry){
     	//     		alert(entry.url+"|"+entry.loc);
+                    temp_count_sum += parseInt(entry.count_sum);
+                    temp_sale_sum += parseInt(entry.sale_sum);
     		    	switch(entry.state_id) {
-    		    	case 67:
+    		    	case "67":
     		    	    c_67.push(entry.count_sum);
     		    	    s_67.push(entry.sale_sum);
     		    	    break;
-    		    	case 68:
+    		    	case "68":
     		    	    c_68.push(entry.count_sum);
     		    	    s_68.push(entry.sale_sum);
     		    	    break;
-    		    	case 69:
+    		    	case "69":
     		    	    c_69.push(entry.count_sum);
     		    	    s_69.push(entry.sale_sum);
     		    	    break;
-    		    	case 74:
+    		    	case "74":
     		    	    c_74.push(entry.count_sum);
     		    	    s_74.push(entry.sale_sum);
     		    	    break;
-    		    	case 75:
+    		    	case "75":
     		    	    c_75.push(entry.count_sum);
     		    	    s_75.push(entry.sale_sum);
     		    	    break;
-    		    	case 76:
+    		    	case "76":
     		    	    c_76.push(entry.count_sum);
     		    	    s_76.push(entry.sale_sum);
     		    	    break;
-    		    	case 77:
+    		    	case "77":
     		    	    c_77.push(entry.count_sum);
     		    	    s_77.push(entry.sale_sum);
     		    	    break;
-
     		    	}
-    				s_count.push(entry.s_count);
-    				in_count.push(entry.in_count);
-    				out_count.push(entry.out_count);
-    				dates.push(entry.dtime);
+    		    	if(!dates.includes(entry.dtime)) {
+                        dates.push(entry.dtime);
+                        count_sum.push(temp_count_sum);
+                        sale_sum.push(temp_sale_sum);
+                        temp_count_sum = 0;
+                        temp_sale_sum = 0;
+                   }
     			});
-    			myOpt.series[0].data = s_count;
-    			myOpt.series[1].data = in_count;
-    			myOpt.series[2].data = out_count;
+               // 将最后一个总计加入数组
+                count_sum.push(temp_count_sum);
+                sale_sum.push(temp_sale_sum);
+                
+                count_sum.shift(0);
+    			myOpt.series[0].data = count_sum;
+    			myOpt.series[1].data = c_67;
+    			myOpt.series[2].data = c_68;
+    			myOpt.series[3].data = c_69;
+    			myOpt.series[4].data = c_74;
+    			myOpt.series[5].data = c_75;
+    			myOpt.series[6].data = c_76;
+    			myOpt.series[7].data = c_77;
     			myOpt.xAxis[0].data = dates;
     			
     	        // 为echarts对象加载数据 
     	        myChart.setOption(myOpt); 
+
+    	        sale_sum.shift(0);
+    			myOpt2.series[0].data = sale_sum;
+    			myOpt2.series[1].data = s_67;
+    			myOpt2.series[2].data = s_68;
+    			myOpt2.series[3].data = s_69;
+    			myOpt2.series[4].data = s_74;
+    			myOpt2.series[5].data = s_75;
+    			myOpt2.series[6].data = s_76;
+    			myOpt2.series[7].data = s_77;
+    			myOpt2.xAxis[0].data = dates;
+    			
+    	        // 为echarts对象加载数据 
+    	        myChart2.setOption(myOpt2); 
+                //隐藏遮照
+                hideLoading();
     		}
 		}
 	});
@@ -300,7 +331,7 @@ function out_excel(){
 		<td>
 			<table width="100%" border="0" cellpadding="0" cellspacing="2">
 				<tr>
-					<td><strong>贩卖渠道汇总</strong>
+					<td><strong>贩卖渠道汇总(从2018-01-01开始统计)</strong>
     				</td>
                </tr>
                 <tr>
@@ -308,12 +339,11 @@ function out_excel(){
                 		<table width="100%" border="0" cellspacing="0" cellpadding="0" id="table_border">
                            <tr>
                 				<td class="cellcolor">
-									渠道:<select name="state_8"><option value="-1">全部</option>
                 				            日期:
                                     <input type="text" name="sdate" id="sdate" size="15" value="" class="Wdate" onclick="WdatePicker()"/> &ndash; 
                                     <input type="text" name="edate" id="edate" size="15" value="" class="Wdate" onclick="WdatePicker()"/>
                                     <input type="button" value="提交" onclick="load()"/>
-                                    <input type="button" value="导出" onclick="out_excel()"/>
+                                    <!--  <input type="button" value="导出" onclick="out_excel()"/> -->
                 				</td>
                 			</tr>
                 			<tr id="simple_rk_priv_out">

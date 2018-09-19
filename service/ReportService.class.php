@@ -11,6 +11,9 @@
         case "init":
             $result = initPage();
         break;
+        case "jxc_report_sum":
+            $result = jxc_report_sumPage();
+        break;
         case "out_excel":
             $result = out_excel();
         break;
@@ -160,6 +163,23 @@
         $edate = $_REQUEST["edate"];
         $query = "SELECT IFNULL(s_count, 0) s_count, IFNULL(in_count, 0) in_count, IFNULL(out_count, 0) out_count, dtime 
            FROM `jxc_report_storage` WHERE `productid` = '{$stext}'";
+        if(!empty($sdate)){
+            $query .= " and dtime >= '{$sdate}'";
+        }
+        if(!empty($edate)){
+            $query .= " and dtime <= '{$edate}'";
+        }
+        $query .= " order by dtime";
+        $result = $newsql->get_results($query);
+		return json_encode($result, JSON_FORCE_OBJECT);
+    }
+    function jxc_report_sumPage() {
+        $newsql = new ezSQL_mysql();
+        $result= array();
+        
+        $sdate = $_REQUEST["sdate"];
+        $edate = $_REQUEST["edate"];
+        $query = "SELECT state_id, count_sum, sale_sum, dtime FROM `jxc_report_sale_sum` where 1=1";
         if(!empty($sdate)){
             $query .= " and dtime >= '{$sdate}'";
         }
