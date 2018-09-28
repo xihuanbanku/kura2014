@@ -405,6 +405,7 @@ define("PAGE_COUNT", 500);
                 and IFNULL(b.l_state3 ,'0') = h.s_value
                 and IFNULL(b.l_state4 ,'0') = i.s_value
                 and IFNULL(b.l_state5 ,'0') = j.s_value
+                and IFNULL(b.l_state8 ,'0') = l.s_value
                 and IFNULL(b.l_state11 ,'0') = k.s_value
                 and b.p_id = a.cp_number
                 and b.l_id = c.id";

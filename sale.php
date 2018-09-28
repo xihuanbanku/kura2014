@@ -112,9 +112,11 @@ function setcod(obj) {
 function iptMode(obj) {
     if (obj.value === "0") {
         document.getElementById("selBtn").disabled = "";
+        document.getElementById("manual_button").disabled = "";
         document.getElementById("tm").disabled = "disabled";
     } else if (obj.value === "1") {
         document.getElementById("selBtn").disabled = "disabled";
+        document.getElementById("manual_button").disabled = "disabled";
         document.getElementById("tm").disabled = "";
     }
     document.forms[0].tm.focus();
@@ -537,7 +539,7 @@ document.forms[0].submit();
   </tr> 
   <tr>
     <td class="cellcolor">&nbsp;</td>
-    <td>&nbsp;<input type="button" value=" 該当販売情報に登録 " disabled onclick="putrkinfo()">&nbsp;&nbsp;<input type="button" value="該当販売情報を保存" onclick="checkForm()"></td>
+    <td>&nbsp;<input type="button" id="manual_button" value="該当販売情報に登録" disabled onclick="putrkinfo()">&nbsp;&nbsp;<input type="button" value="該当販売情報を保存" onclick="checkForm()"></td>
   </tr>
   <tr>
    <td colspan="2">
