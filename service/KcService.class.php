@@ -397,7 +397,7 @@ define("PAGE_COUNT", 500);
         $ksql = new Dedesql(false);
         $query = "select count(0)
             from #@__basic a, #@__mainkc b, #@__lab c , jxc_categories d, jxc_categories e,
-            jxc_state f, jxc_state g, jxc_state h, jxc_state i, jxc_state j, jxc_state k
+            jxc_state f, jxc_state g, jxc_state h, jxc_state i, jxc_state j, jxc_state k, jxc_state l
             where a.cp_categories = d.id 
                 and a.cp_categories_down = e.id
                 and IFNULL(b.l_state1 ,'0') = f.s_value
