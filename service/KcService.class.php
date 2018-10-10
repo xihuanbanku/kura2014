@@ -203,6 +203,8 @@ define("PAGE_COUNT", 500);
         }
         if(!empty($sstate1)){
             $query .= " and b.l_state1 = '{$sstate1}'";
+        } else {
+            $query .= " and b.l_state1 != '64'";
         }
         if(!empty($sstate2)){
             $query .= " and b.l_state2 = '{$sstate2}'";
@@ -482,6 +484,8 @@ define("PAGE_COUNT", 500);
         }
         if(!empty($sstate1)){
             $query .= " and b.l_state1 = '{$sstate1}'";
+        } else {
+            $query .= " and b.l_state1 != '64'";
         }
         if(!empty($sstate2)){
             $query .= " and b.l_state2 = '{$sstate2}'";
