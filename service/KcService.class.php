@@ -202,9 +202,9 @@ define("PAGE_COUNT", 500);
             $query .= " and b.l_id = '{$labid}'";
         }
         if(!empty($sstate1)){
-            $query .= " and b.l_state1 = '{$sstate1}'";
+            $query .= " and IFNULL(b.l_state1 ,'0') = '{$sstate1}'";
         } else {
-            $query .= " and b.l_state1 != '64'";
+            $query .= " and IFNULL(b.l_state1 ,'0') != '64'";
         }
         if(!empty($sstate2)){
             $query .= " and b.l_state2 = '{$sstate2}'";
@@ -483,9 +483,9 @@ define("PAGE_COUNT", 500);
             $query .= " and b.l_id = '{$labid}'";
         }
         if(!empty($sstate1)){
-            $query .= " and b.l_state1 = '{$sstate1}'";
+            $query .= " and IFNULL(b.l_state1 ,'0') = '{$sstate1}'";
         } else {
-            $query .= " and b.l_state1 != '64'";
+            $query .= " and IFNULL(b.l_state1 ,'0') != '64'";
         }
         if(!empty($sstate2)){
             $query .= " and b.l_state2 = '{$sstate2}'";
