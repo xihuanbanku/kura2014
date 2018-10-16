@@ -69,7 +69,7 @@ function checkForm(){
 		alert("是否公开该公告");
 		return;
 	}
-	if($("input[type=radio]:checked").val() == 0 && checkCount<=0){
+	if(($("input[type=radio]:checked").val() == 0 || $("input[type=radio]:checked").val() == 2) && checkCount<=0){
 		alert("请选择收件人");
 		return;
 	}
