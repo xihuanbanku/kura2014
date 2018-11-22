@@ -152,14 +152,14 @@ function uploadFile($file, $filetempname) {
                         break 2;
                     }
                     $number = trim($strs[$colHead["NUMBER"]]) == "" ? 0 : trim($strs[$colHead["NUMBER"]]);
-                    $state2 = trim($strs[$colHead["STATE2"]]) == "" ? 60 : trim($strs[$colHead["STATE2"]]);
+//                     $state2 = trim($strs[$colHead["STATE2"]]) == "" ? 60 : trim($strs[$colHead["STATE2"]]);
                     $index=0;
                     $notesql="INSERT INTO `#@__mainkc` (`p_id`, `l_id`, `d_id`, `number`, `l_floor`, `l_shelf`, `l_zone`, `l_horizontal`, `l_vertical`, 
                     `l_state1`, `l_state2`, `l_state3`, `l_state4`, `l_state5`, `l_state6`, `l_state7`, `l_state8`, `l_state9`, `l_state10`, 
                     `l_note`, `dtime`
                     ) VALUES ('{$strs[$colHead["P_CODE"]]}','{$strs[$colHead["L_ID"]]}','0','{$number}','{$stores[$index++]}',
                     '{$stores[$index++]}', '{$stores[$index++]}', '{$stores[$index++]}', '{$stores[$index++]}',
-                    '{$strs[$colHead["STATE1"]]}','{$state2}','{$strs[$colHead["STATE3"]]}','{$strs[$colHead["STATE4"]]}','{$strs[$colHead["STATE5"]]}',
+                    se'{$strs[$colHead["STATE1"]]}','{$state2}','{$strs[$colHead["STATE3"]]}','{$strs[$colHead["STATE4"]]}','{$strs[$colHead["STATE5"]]}',
                     '{$strs[$colHead["STATE6"]]}','{$strs[$colHead["STATE7"]]}','{$strs[$colHead["STATE8"]]}','{$strs[$colHead["STATE9"]]}','{$strs[$colHead["STATE10"]]}','{$strs[$colHead["NOTE"]]}', now()) ";
 	                $b2 = $nsql->ExecuteNoneQuery($notesql);
 	                echo mysql_error();
