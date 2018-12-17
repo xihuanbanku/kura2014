@@ -29,6 +29,9 @@ $(function(){
 	//获取当前月份(0-11,0代表1月)
 	if(thisMonth < 9) {
 		$("select[name='dutyMonth']").val("0"+(thisMonth+1));
+	} else if(thisMonth >= 12){
+		$("select[name='dutyYear']").val(myDate.getFullYear()+1);
+		$("select[name='dutyMonth']").val("01");
 	} else {
 		$("select[name='dutyMonth']").val(thisMonth+1);
 	}
