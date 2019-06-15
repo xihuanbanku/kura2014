@@ -23,7 +23,7 @@ $(function(){
 	$.ajax({
 		type: "post",
 		url: url,
-		data: {"flag":"initMenu", "userID":<?php echo $_COOKIE["userID"];?>, "c":<?php echo $_REQUEST["c"] == "" ? -1 : $_REQUEST["c"];?>},
+		data: {"flag":"initMenu", "userID":<?php echo $_COOKIE["userID"];?>, "c":<?php echo $_REQUEST["c"] == "" ? 0 : $_REQUEST["c"];?>},
 		success: function(data){
 			if(data.length > 12) {
     			data = eval("("+data+")");

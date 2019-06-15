@@ -39,7 +39,7 @@ define("PAGE_COUNT", 500);
             $result = writeKcState();
         break;
         case "out_excel":
-            $result = out_excel();
+            out_excel();
         break;
         
         default:
@@ -48,7 +48,7 @@ define("PAGE_COUNT", 500);
     }
     echo $result;  
     
-    function initPage($pageCount=100000, $pageIndex=1, $exportType) {
+    function initPage($pageCount=100000, $pageIndex=1, $exportType = null) {
         $result= array();
         $stext = trim($_REQUEST["stext"]);
         $textRelate = trim($_REQUEST["textRelate"]);
@@ -571,6 +571,7 @@ define("PAGE_COUNT", 500);
         $query = "select id, name from #@__year";
         $ksql->setquery($query);
         $ksql->execute();
+        $selectHtml = "";
         while ($row = $ksql->GetAssoc()) {
             $selectHtml .= "<option value='{$row["id"]}'>{$row["name"]}</option>";
         }
@@ -582,6 +583,7 @@ define("PAGE_COUNT", 500);
         $query = "select id, name from #@__new";
         $ksql->setquery($query);
         $ksql->execute();
+        $selectHtml = "";
         while ($row = $ksql->GetAssoc()) {
             $selectHtml .= "<option value='{$row["id"]}'>{$row["name"]}</option>";
         }
@@ -593,6 +595,7 @@ define("PAGE_COUNT", 500);
         $query = "select id, categories from #@__categories where reid = 0";
         $ksql->setquery($query);
         $ksql->execute();
+        $selectHtml = "";
         while ($row = $ksql->GetAssoc()) {
             $selectHtml .= "<option value='{$row["id"]}'>{$row["categories"]}</option>";
         }
@@ -1390,6 +1393,7 @@ define("PAGE_COUNT", 500);
             }
     }
     function insertSign($count, $sign){
+        $str = "";
         for($i=0; $i<$count; $i++) {
             $str.=$sign;
         }

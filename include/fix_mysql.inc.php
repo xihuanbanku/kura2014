@@ -71,6 +71,12 @@ if (!function_exists("mysql_connect")){
   function mysql_num_rows($result){
     return mysqli_num_rows($result);
   }
+  function mysql_num_fields($result){
+    return mysqli_num_fields($result);
+  }
+  function mysql_fetch_field($result){
+    return mysqli_fetch_field($result);
+  }
   function mysql_affected_rows($link_identifier = NULL){
     // TODO: check, if working when called without argument: mysql_affected_rows()
     global $global_link_identifier;
