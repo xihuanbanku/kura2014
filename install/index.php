@@ -56,7 +56,7 @@ else if($step==3)
 {
 	if(!empty($_SERVER["REQUEST_URI"])){$scriptName = $_SERVER["REQUEST_URI"]; }
   else{ $scriptName = $_SERVER["PHP_SELF"]; }
-  $path = ereg_replace("/install/index\.php(.*)$","",$scriptName);
+  $path = preg_replace("/install/index\.php(.*)$","",$scriptName);
   if(empty($_SERVER['HTTP_HOST'])) $baseurl = "http://".$_SERVER['HTTP_HOST'];
   else $baseurl = "http://".$_SERVER['SERVER_NAME'];
   $rnd_cookieEncode = chr(mt_rand(ord('A'),ord('Z'))).chr(mt_rand(ord('a'),ord('z'))).chr(mt_rand(ord('A'),ord('Z'))).chr(mt_rand(ord('A'),ord('Z'))).chr(mt_rand(ord('a'),ord('z'))).mt_rand(1000,9999).chr(mt_rand(ord('A'),ord('Z')));

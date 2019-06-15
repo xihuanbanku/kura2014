@@ -16,7 +16,7 @@ foreach($_POST as $k=>$v){
 		$v = ${$k};
 
 	}else continue;
-	$k = ereg_replace("^edit___","",$k);
+	$k = preg_replace("^edit___","",$k);
 		if(strlen($v) > 250){
 			showmsg("$k 長さが250バイト超えている",'-1');
 			exit;
