@@ -126,9 +126,9 @@ class BuyingService {
 
     /**
      * 上传文件
-     * @param unknown $type
-     * @param unknown $file
-     * @param unknown $filetempname
+     * @param int $type
+     * @param  $file
+     * @param  $filetempname
      * @return multitype:number string
      */
     function uploadFile($type, $file, $filetempname) {

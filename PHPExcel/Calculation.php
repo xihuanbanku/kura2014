@@ -3220,7 +3220,7 @@ class PHPExcel_Calculation {
 								$result = '#VALUE!';
 							}
 						} else {
-							$result = '"'.str_replace('""','"',self::_unwrapResult($operand1,'"').self::_unwrapResult($operand2,'"')).'"';
+							$result = '"'.str_replace('""','"',self::_unwrapResult($operand1).self::_unwrapResult($operand2)).'"';
 						}
 						$this->_debugLog->writeDebugLog('Evaluation Result is ', $this->_showTypeDetails($result));
 						$stack->push('Value',$result);
