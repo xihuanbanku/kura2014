@@ -48,7 +48,7 @@ if ($leadExcel == "true") {
     $tmp_name = $_FILES['inputFile']['tmp_name'];
     
     // 自己设置的上传文件存放路径
-    $filePath = '/home/p-mon/pmon.jp/upload/finance/';
+    $filePath = '/home/p-mon/tousho.co.jp/upload/finance/';
     
     $filename = explode(".", $upfilename); // 把上传的文件名以"."分割
     $time = date("Ymd_His"); // 去当前上传的时间

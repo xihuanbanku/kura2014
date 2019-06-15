@@ -2,7 +2,7 @@
 ini_set("SMTP", "smtp.sina.com");
 ini_set("smtp_port", "25");
 
-$to = "info@pmon.jp";
+$to = "info@tousho.co.jp";
 if(isset($_POST["name"]) && !empty($_POST["name"])) {
     $name = $_POST["name"];
 } else {

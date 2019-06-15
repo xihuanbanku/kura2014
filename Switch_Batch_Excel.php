@@ -1,10 +1,11 @@
 <?php
 require_once(dirname(__FILE__)."/include/config_base.php");
+require_once(dirname(__FILE__)."/include/fix_mysql.inc.php");
 // 导入Excel文件
 function uploadFile($file, $filetempname) {
     $importStat=array("succ"=>0,"msg"=>0);
     // 自己设置的上传文件存放路径
-    $filePath = '/home/p-mon/pmon.jp/public_html/kura2014/upload/';
+    $filePath = '/home/p-mon/tousho.co.jp/public_html/kura2014/upload/';
     $str = "";
     //因为是用的数组， 所以列数-1
     define("P_CODE_COLUMN", 0);
@@ -15,7 +16,7 @@ function uploadFile($file, $filetempname) {
     
     
  // 下面的路径按照你PHPExcel的路径来修改
-    set_include_path('/home/p-mon/pmon.jp/public_html/kura2014/PHPExcel' . PATH_SEPARATOR . get_include_path());
+    set_include_path('/home/p-mon/tousho.co.jp/public_html/kura2014/PHPExcel' . PATH_SEPARATOR . get_include_path());
 
     require_once 'PHPExcel.php';
     require_once 'PHPExcel/IOFactory.php';

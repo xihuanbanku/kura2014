@@ -173,7 +173,8 @@ function resetBT(){
 		<td width="420" style="color:#FF0000;">
 		<div id="alarm_div" style="display:none;">アラーム:<b id="alarm_b">0</b>件商品がまもなく在庫切れです。<a href='system_kc.php?target=check&sstate12=1' target='main'>チェック</a>
 		</div></td>
-		<?php require_once(dirname(__FILE__)."/include/config_base.php");?>
+		<?php require_once(dirname(__FILE__)."/include/config_base.php");
+              require_once(dirname(__FILE__)."/include/fix_mysql.inc.php");?>
         <td align="right">&nbsp;<?php echo $_COOKIE['VioomaUserID']."(".getusertype($_COOKIE['rank'],0).")";?>&nbsp;|&nbsp;<a href="system_password.php" target="main">パスワード変更</a>&nbsp;|&nbsp;<a href="system_out.php" target="_top">ログアウト</a></td>
        </tr>
       </table>

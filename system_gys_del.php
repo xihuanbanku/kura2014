@@ -7,6 +7,7 @@
 <body>
 <?php
 require_once(dirname(__FILE__)."/include/config_base.php");
+require_once(dirname(__FILE__)."/include/fix_mysql.inc.php");
 require_once(dirname(__FILE__)."/include/config_rglobals.php");
 require_once(dirname(__FILE__)."/include/checklogin.php");
 if($id=='')ShowMsg('不正操作','system_gys.php');

@@ -1,5 +1,6 @@
 <?php
 require (dirname(__FILE__) . "/include/config_base.php");
+require (dirname(__FILE__) . "/include/fix_mysql.inc.php");
 require (dirname(__FILE__) . "/include/config_rglobals.php");
 require_once (dirname(__FILE__) . "/include/checklogin.php");
 if ($action == 'save') {

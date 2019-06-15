@@ -16,12 +16,12 @@ if($ref==''){
     echo '403 Fobbiden,无法访问';
     exit();
 }
-if(!strpos($ref,"pmon.jp")){
+if(!strpos($ref,"tousho.co.jp")){
     echo '403 Fobbiden,无法访问';
     exit();
 }
 $picture_name = $_REQUEST["p"];
-$data = file_get_contents('/home/p-mon/pmon.jp/upload/finance/'.$picture_name);
+$data = file_get_contents('/home/p-mon/tousho.co.jp/upload/finance/'.$picture_name);
 // header('content-type:image/jpeg');
 // echo $data;
 ?>

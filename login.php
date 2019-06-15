@@ -60,11 +60,12 @@ return true;
 <?php
 require_once(dirname(__FILE__)."/include/config_rglobals.php");
 require_once(dirname(__FILE__)."/include/config_base.php");
+require_once(dirname(__FILE__)."/include/fix_mysql.inc.php");
 if ($action=='login')
 {
  if (GetCkVdValue()!=$code)
   {//登録処理
-  $username = preg_replace("['\"\$ \r\n\t;<>\*%\?]", '', $username);
+  $username = preg_replace("/['\"\$ \r\n\t;<>\*%\?]/", '', $username);
   $loginip=getip();
   $logindate=getdatetimemk(time());
   $lsql=new Dedesql(false);
@@ -81,6 +82,9 @@ if ($action=='login')
   }
   else
   {
+      echo "----";
+      echo $row;
+      echo "----";
     //正常登録、データ読み込み可
     $message="正常登録しました。";
     $_SESSION['VioomaUserID']=$username;

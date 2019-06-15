@@ -1,5 +1,6 @@
 <?php
 require_once(dirname(__FILE__)."/include/config_base.php");
+require_once(dirname(__FILE__)."/include/fix_mysql.inc.php");
 require_once(dirname(__FILE__)."/include/a_code.php");
 require_once(dirname(__FILE__)."/include/cryption.php");
 require(dirname(__FILE__)."/include/config_rglobals.php");

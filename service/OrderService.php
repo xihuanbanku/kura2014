@@ -44,11 +44,11 @@ class OrderService {
     function uploadFile($file, $filetempname) {
         $importStat=array("n"=>0,"u"=>0,"d"=>0,"e"=>0,"m"=>0,"filename"=>0);
         // 自己设置的上传文件存放路径
-        $filePath = '/home/p-mon/pmon.jp/public_html/kura2014/upload/';
+        $filePath = '/home/p-mon/tousho.co.jp/public_html/kura2014/upload/';
         $str = "";
         
         // 下面的路径按照你PHPExcel的路径来修改
-        set_include_path('/home/p-mon/pmon.jp/public_html/kura2014/PHPExcel' . PATH_SEPARATOR . get_include_path());
+        set_include_path('/home/p-mon/tousho.co.jp/public_html/kura2014/PHPExcel' . PATH_SEPARATOR . get_include_path());
         
         date_default_timezone_set("PRC");
         $filename = explode(".", $file); // 把上传的文件名以“.”好为准做一个数组。

@@ -1,5 +1,6 @@
 <?php
 require_once(dirname(__FILE__)."/include/config_base.php");
+require_once(dirname(__FILE__)."/include/fix_mysql.inc.php");
 // 导入Excel文件
 function uploadFile($file, $filetempname)
 {
