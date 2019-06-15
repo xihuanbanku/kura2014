@@ -15,7 +15,7 @@ foreach($ckvs4 as $_k=>$_v){
 }
 foreach($ckvs as $ckv){
    foreach($$ckv AS $_k => $_v){ 
-      if(eregi("^(_|globals|cfg_)",$_k)) unset(${$ckv}[$_k]);
+      if(preg_match("^(_|globals|cfg_)",$_k)) unset(${$ckv}[$_k]);
    }
 }
 

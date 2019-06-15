@@ -22,7 +22,7 @@ show_msg($msgs);
 <?
 $handle=opendir('./backup');
 while ($file = readdir($handle)) {
-    if(eregi("^[0-9]{8,8}([0-9a-z_]+)(\.sql)$",$file)) echo "<option value='$file'>$file</option>";}
+    if(preg_match("^[0-9]{8,8}([0-9a-z_]+)(\.sql)$",$file)) echo "<option value='$file'>$file</option>";}
 closedir($handle); 
 ?>
   </select> </td></tr>
@@ -37,7 +37,7 @@ closedir($handle);
 if(!$_POST['serverfile'])
 	{$msgs[]="您选择从服务器文件恢复备份，但没有指定备份文件";
 	 show_msg($msgs); pageend();	}
-if(!eregi("_v[0-9]+",$_POST['serverfile']))
+if(!preg_match("_v[0-9]+",$_POST['serverfile']))
 	{$filename="./backup/".$_POST['serverfile'];
 	if(import($filename)) $msgs[]="备份文件".$_POST['serverfile']."成功导入数据库";
 	else $msgs[]="备份文件".$_POST['serverfile']."导入失败";

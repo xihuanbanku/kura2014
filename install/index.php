@@ -76,7 +76,7 @@ else if($step==5)
   	$setupinfo = '';
   	$gotourl = '';
   	$gototime = 2000;
-  	if(eregi("[^\.0-9a-z@!_-]",$adminuser) || eregi("[^\.0-9a-z@!_-]",$adminpwd)){
+  	if(preg_match("[^\.0-9a-z@!_-]",$adminuser) || preg_match("[^\.0-9a-z@!_-]",$adminpwd)){
   		echo GetBackAlert("管理员用户名或密码含有非法字符！");
   		exit();
   	}
@@ -188,13 +188,13 @@ else if($step==5)
     while(!feof($fp))
 	  {
 		   $line = trim(fgets($fp,1024));
-		   if(ereg(";$",$line)){
+		   if(preg_match(";$",$line)){
 			   $query .= $line;
 			   $query = str_replace('#@__',$dbprefix,$query);
 			   if($mysql_version < 4.1) mysql_query($query,$conn);
 			   else mysql_query(str_replace('#~lang~#',$db_language,$query),$conn);
 			   $query='';
-		   }else if(!ereg("^(//|--)",$line)){
+		   }else if(!preg_match("^(//|--)",$line)){
 			   $query .= $line;
 		   }
 	  }
@@ -234,12 +234,12 @@ else if($step==5)
      while(!feof($fp))
 	   {
 		   $line = trim(fgets($fp,1024));
-		   if(ereg(";$",$line)){
+		   if(preg_match(";$",$line)){
 			   $query .= $line;
 //if(trim($query)!='') mysql_query(str_replace('#@__',$dbprefix,$query),$conn);
 			   $dsql->ExecuteNoneQuery($query);
 			   $query='';
-		   }else if(!ereg("^(//|--)",$line)){
+		   }else if(!preg_match("^(//|--)",$line)){
 			   $query .= $line;
 		   }
 	   }

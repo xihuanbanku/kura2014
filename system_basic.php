@@ -12,7 +12,7 @@ if(!is_writeable($configfile)){
 }
 $savesql = new DedeSql(false);
 foreach($_POST as $k=>$v){
-	if(ereg("^edit___",$k)){
+	if(preg_match("^edit___",$k)){
 		$v = ${$k};
 
 	}else continue;
