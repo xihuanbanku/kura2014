@@ -259,7 +259,7 @@ function uploadFile($file, $filetempname) {
                             echo date("Ymd-H:i:s")."----B|".$j."出现错误[记录无效，无法完成操作]商品CODE:".$strs[$colHead["P_CODE"]]."--- main_kc ID:".$strs[$colHead["KID"]];
                             error_log(date("Ymd-H:i:s")."----B|".$j."出现错误[记录无效，无法完成操作]商品CODE:".$strs[$colHead["P_CODE"]]."---main_kc ID:".$strs[$colHead["KID"]]."\n", 3, "logs/upload.log");
                             break 2;
-                        } else if($res[0] < 0) {
+                        } else if(mysql_fetch_array($res)[0] < 0) {
                             $nsql->rollback();
                             echo mysql_error();
                             $importStat["m"] = 1;
@@ -276,7 +276,7 @@ function uploadFile($file, $filetempname) {
                             echo date("Ymd-H:i:s")."----B|".$j."出现错误[记录无效，无法完成操作]商品CODE:".$strs[$colHead["P_CODE"]]."---仓库号:".$strs[$colHead["L_ID"]];
                             error_log(date("Ymd-H:i:s")."----B|".$j."出现错误[记录无效，无法完成操作]商品CODE:".$strs[$colHead["P_CODE"]]."---仓库号:".$strs[$colHead["L_ID"]]."\n", 3, "logs/upload.log");
                             break 2;
-                        } else if($res[0] < 0) {
+                        } else if(mysql_fetch_array($res)[0] < 0) {
                             $nsql->rollback();
                             echo mysql_error();
                             $importStat["m"] = 1;
