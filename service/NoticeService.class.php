@@ -243,6 +243,7 @@ date_default_timezone_set('PRC');
         header ('Pragma: public'); // HTTP/1.0
 
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        ob_end_clean();
         $objWriter->save('php://output');
         exit;
     }
