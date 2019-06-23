@@ -197,8 +197,8 @@ session_start();
         $remark2     =$_REQUEST["remark2"];
         $remark3     =$_REQUEST["remark3"];
         $owner       =$_REQUEST["owner"];
-        
-        
+
+        $count = 0;
         $status = 0;
         if(!empty($_REQUEST["status"])) {
             $status=$_REQUEST["status"];
@@ -220,12 +220,13 @@ session_start();
                 owner         = '".$owner     ."'
                 where id = ".$id."
                 and (owner ={$userID} or (select count(0) from jxc_menu where id=76 and INSTR(rank, '|".$userID."|') > 0))";
-        $newsql->query($query);
+        $count += $newsql->query($query);
         $query = "update jxc_luggage 
             set remark3    = '".$remark3    ."',
                 cp_number     = '".$cp_number   ."'
                 where id = ".$id;
-        return $newsql->query($query);
+        $count += $newsql->query($query);
+        return $count;
     }
     /**
      * 批量更新状态

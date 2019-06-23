@@ -48,14 +48,14 @@ if ($leadExcel == "true") {
     $tmp_name = $_FILES['inputFile']['tmp_name'];
     
     // 自己设置的上传文件存放路径
-    $filePath = '/home/p-mon/p-mon.jp/public_html/picture/'.$dir_name.'/';
+    $filePath = '/home/p-mon/tousho.co.jp/public_html/picture/'.$dir_name.'/';
     
     $uploadfile = $filePath . $filename; // 上传后的文件名地址
 
     error_log(date("Ymd-H:i:s")."----[".$_COOKIE["VioomaUserID"]."]上传文件".$uploadfile."\n", 3, dirname(__FILE__)."/../logs/sql".date("Ymd").".log");
     // move_uploaded_file() 函数将上传的文件移动到新位置。若成功，则返回 true，否则返回 false。
     $result = move_uploaded_file($tmp_name, $uploadfile);
-    $visitUrl="http://www.p-mon.jp/picture/".$dir_name."/".$filename;
+    $visitUrl="http://www.tousho.co.jp/picture/".$dir_name."/".$filename;
     if ($result) {// 如果上传文件成功，就执行后续操作
         echo "<script language=\"javascript\">alert('文件上传成功');window.close();window.opener.document.{$form}.{$field}.value='{$visitUrl}'; </script>";
     } else {
