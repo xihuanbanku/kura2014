@@ -160,7 +160,7 @@ function uploadFile($file, $filetempname) {
                     `l_note`, `dtime`
                     ) VALUES ('{$strs[$colHead["P_CODE"]]}','{$strs[$colHead["L_ID"]]}','0','{$number}','{$stores[$index++]}',
                     '{$stores[$index++]}', '{$stores[$index++]}', '{$stores[$index++]}', '{$stores[$index++]}',
-                    se'{$strs[$colHead["STATE1"]]}','{$state2}','{$strs[$colHead["STATE3"]]}','{$strs[$colHead["STATE4"]]}','{$strs[$colHead["STATE5"]]}',
+                    '{$strs[$colHead["STATE1"]]}','{$state2}','{$strs[$colHead["STATE3"]]}','{$strs[$colHead["STATE4"]]}','{$strs[$colHead["STATE5"]]}',
                     '{$strs[$colHead["STATE6"]]}','{$strs[$colHead["STATE7"]]}','{$strs[$colHead["STATE8"]]}','{$strs[$colHead["STATE9"]]}','{$strs[$colHead["STATE10"]]}','{$strs[$colHead["NOTE"]]}', now()) ";
 	                $b2 = $nsql->ExecuteNoneQuery($notesql);
 	                echo mysql_error();

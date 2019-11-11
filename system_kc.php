@@ -81,30 +81,7 @@ $(function(){
 			}
 		});
 	});
-	
-	//加载按钮
-	$.ajax({
-		type: "post",
-		url: "service/MenuService.class.php",
-		data: {"flag":"initButton", "reid":"5", "user":<?php echo GetCookie('userID')?>},
-		success: function(data){
-			data = eval("("+data+")");
-    		$.each(data, function(entryIndex, entry){
-//         		alert(entry.url+"|"+entry.loc);
-        		if(entry.loc > 0) {
-    				$("#" + entry.url).show();
-        		} else {
-    				$("#" + entry.url).remove();
-        		}
-        		if(entry.url == "editA" && entry.loc > 0) {
-        		    $("input[name=editA]").val(1);
-        		}
-        		if(entry.url == "deleteA" && entry.loc > 0) {
-        		    $("input[name=deleteA]").val(1);
-        		}
-    		});
-		}
-	});
+
 	//加载表头
 	$.ajax({
 		type: "post",
@@ -403,101 +380,125 @@ function update_lab() {
 	});
 }
 function initPage(pageIndex) {
-	showLoading();
-	//分页参数
-	var pageCount = 20;
-	var recordCount = 0;
-	var url = "service/KcService.class.php?"+$("select").serialize()+"&pageCount="+pageCount+"&pageIndex="+(pageIndex+1)+"&nocache="+new Date().getTime()+"&sstate12=<?php echo $_REQUEST["sstate12"]?>";
-	var param = $("input").serialize();
-	$.ajax({
-		type: "post",
-		url: url+"&"+param,
-		data: {"flag":"init"},
-		success: function(data){
+    showLoading();
+    //加载按钮
+    $.ajax({
+        type: "post",
+        url: "service/MenuService.class.php",
+        data: {"flag":"initButton", "reid":"5", "user":<?php echo GetCookie('userID')?>},
+        success: function(data){
+            data = eval("("+data+")");
+            $.each(data, function(entryIndex, entry){
+//         		alert(entry.url+"|"+entry.loc);
+                if(entry.loc > 0) {
+                    $("#" + entry.url).show();
+                } else {
+                    $("#" + entry.url).remove();
+                }
+                if(entry.url == "editA" && entry.loc > 0) {
+                    $("input[name=editA]").val(1);
+                }
+                if(entry.url == "deleteA" && entry.loc > 0) {
+                    $("input[name=deleteA]").val(1);
+                }
+            });
+
+            //分页参数
+            var pageCount = 20;
+            var recordCount = 0;
+            var url = "service/KcService.class.php?"+$("select").serialize()+"&pageCount="+pageCount+"&pageIndex="+(pageIndex+1)+"&nocache="+new Date().getTime()+"&sstate12=<?php echo $_REQUEST["sstate12"]?>";
+            var param = $("input").serialize();
+            $.ajax({
+                type: "post",
+                url: url+"&"+param,
+                data: {"flag":"init"},
+                success: function(data){
 //     		alert(data);
-			data = eval("("+data+")");
-    		var html="";
-    		$.each(data.results, function(entryIndex, entry){
-        		//         			alert(entry.id+"|"+entry.name);
-    			html+="<tr>"
-    			+"	<td><input type=\"checkbox\" value=\"" + entry.id + "#" + entry.kid + "\" name=\"strChk[]\">";
-    			<?php if(!isset($_REQUEST["sstate12"])) {?>
-    			if($("input[name=editA]").val() == "1") {
-    				html+="	<a target=\"_blank\" href=\"system_kc_edit.php?id=" + entry.kid + "&lid=" + entry.l_id + "&n=" + entry.number + "&pid=" + entry.cp_number
-    			    + "&floor=" + entry.l_floor + "&shelf=" + entry.l_shelf + "&zone=" + entry.l_zone + "&horizontal=" + entry.l_horizontal + "&vertical=" + entry.l_vertical + "\">修正</a>";
-    			}
-    			if($("input[name=deleteA]").val() == "1") {
-    				html+="|<a onclick=\"submitChk(" + entry.kid + ",'" + entry.cp_number + "')\" href=\"#\">削除</a>";
-    			}
-    			<?php } ?>
-    			html+="	</td><td><a target=\"_blank\" href=\"system_basic_refer.php?id=" + entry.cp_number + "\" style=\"text-decoration:underline\">" + entry.cp_number + "</a></td>"
-    			+"  <td style=\"display:none\">" + entry.buying_number + "</td>"
-    			+"  <td style=\"display:none\">" + entry.page_name_id + "</td>"
-    			+"  <td title=\"" + entry.cp_name + "\">" + entry.cp_name + "</td>"
-    			+"	<td>" + entry.cp_title + "</td>"
-    			+"  <td><input type=\"hidden\" value=\"" + entry.l_id + "\"/><b>" + entry.l_name + "</b></td>"
-    			+"  <td>" + entry.l_floor + "-" + entry.l_shelf + "-" + entry.l_zone + "-" + entry.l_horizontal + "-" + entry.l_vertical + "</td>"
-    			+"	<td align=\"right\"><font color=\"blue\">￥" + entry.cp_sale1 + "</font></td>"
-    			+"  <td align=\"right\"><font color=\"red\">" + entry.number + "</font></td>"
-    			+"  <td>" + entry.s_name1 + "</td>"
-    			+"  <td>" + entry.s_name2 + "</td>"
-    			+"  <td>" + entry.s_name3 + "</td>"
-    			+"  <td>" + entry.s_name4 + "</td>"
-    			+"  <td>" + entry.s_name5 + "</td>"
-    			+"  <td>" + entry.s_name6 + "</td>"
-    			+"  <td>" + entry.s_name7 + "</td>"
-    			+"  <td>" + entry.s_name8 + "</td>"
-    			+"  <td>" + entry.s_name9 + "</td>"
-    			+"  <td>" + entry.s_name10 + "</td>"
-    			+"  <td>" + entry.s_name11 + "</td>"
-    			+"  <td>" + entry.s_name12 + "</td>"
-    			+"  <td title=\"" + entry.l_asin + "\">" + entry.l_asin + "</td>"
-    			+"  <td title=\"" + entry.l_note + "\">" + entry.l_note + "</td>"
-    			+"  <td>" + entry.dtime + "</td>"
-    			+"  <td>" + entry.cp_dtime + "</td>"
-    			+"  <td>" + entry.kid + "</td>"
-    			+"</tr>";
-    		});
+                    data = eval("("+data+")");
+                    var html="";
+                    $.each(data.results, function(entryIndex, entry){
+                        //         			alert(entry.id+"|"+entry.name);
+                        html+="<tr>"
+                            +"	<td><input type=\"checkbox\" value=\"" + entry.id + "#" + entry.kid + "\" name=\"strChk[]\">";
+                        <?php if(!isset($_REQUEST["sstate12"])) {?>
+                        if($("input[name=editA]").val() == "1") {
+                            html+="	<a target=\"_blank\" href=\"system_kc_edit.php?id=" + entry.kid + "&lid=" + entry.l_id + "&n=" + entry.number + "&pid=" + entry.cp_number
+                                + "&floor=" + entry.l_floor + "&shelf=" + entry.l_shelf + "&zone=" + entry.l_zone + "&horizontal=" + entry.l_horizontal + "&vertical=" + entry.l_vertical + "\">修正</a>";
+                        }
+                        if($("input[name=deleteA]").val() == "1") {
+                            html+="|<a onclick=\"submitChk(" + entry.kid + ",'" + entry.cp_number + "')\" href=\"#\">削除</a>";
+                        }
+                        <?php } ?>
+                        html+="	</td><td><a target=\"_blank\" href=\"system_basic_refer.php?id=" + entry.cp_number + "\" style=\"text-decoration:underline\">" + entry.cp_number + "</a></td>"
+                            +"  <td style=\"display:none\">" + entry.buying_number + "</td>"
+                            +"  <td style=\"display:none\">" + entry.page_name_id + "</td>"
+                            +"  <td title=\"" + entry.cp_name + "\">" + entry.cp_name + "</td>"
+                            +"	<td>" + entry.cp_title + "</td>"
+                            +"  <td><input type=\"hidden\" value=\"" + entry.l_id + "\"/><b>" + entry.l_name + "</b></td>"
+                            +"  <td>" + entry.l_floor + "-" + entry.l_shelf + "-" + entry.l_zone + "-" + entry.l_horizontal + "-" + entry.l_vertical + "</td>"
+                            +"	<td align=\"right\"><font color=\"blue\">￥" + entry.cp_sale1 + "</font></td>"
+                            +"  <td align=\"right\"><font color=\"red\">" + entry.number + "</font></td>"
+                            +"  <td>" + entry.s_name1 + "</td>"
+                            +"  <td>" + entry.s_name2 + "</td>"
+                            +"  <td>" + entry.s_name3 + "</td>"
+                            +"  <td>" + entry.s_name4 + "</td>"
+                            +"  <td>" + entry.s_name5 + "</td>"
+                            +"  <td>" + entry.s_name6 + "</td>"
+                            +"  <td>" + entry.s_name7 + "</td>"
+                            +"  <td>" + entry.s_name8 + "</td>"
+                            +"  <td>" + entry.s_name9 + "</td>"
+                            +"  <td>" + entry.s_name10 + "</td>"
+                            +"  <td>" + entry.s_name11 + "</td>"
+                            +"  <td>" + entry.s_name12 + "</td>"
+                            +"  <td title=\"" + entry.l_asin + "\">" + entry.l_asin + "</td>"
+                            +"  <td title=\"" + entry.l_note + "\">" + entry.l_note + "</td>"
+                            +"  <td>" + entry.dtime + "</td>"
+                            +"  <td>" + entry.cp_dtime + "</td>"
+                            +"  <td>" + entry.kid + "</td>"
+                            +"</tr>";
+                    });
 
-    		$("#table_border tr:gt(0)").remove();
-    		$("#table_border").append(html);
-    	    //如果是从"チェック"跳转过来的, 需要将状态1-10隐藏, 只显示状态11-12
-    	    if(getQueryString("target") == "check") {
-    	    	$("#table_border th:gt(7):lt(10)").hide();
-    	    	$("#table_border tr").find("td:gt(9):lt(10)").hide();
-    	    } else {
-    	    	$("#table_border th:gt(17):lt(2)").hide();
-    	    	$("#table_border tr").find("td:gt(19):lt(2)").hide();
-    	    }
-    		
-    		//如果是从"快速入库"跳转过来的,为tr绑定双击关闭事件
-    	    if(getQueryString("target") == "blank") {
-    	    	$("#table_border tr:gt(0)").dblclick(function(){
-					window.opener.document.all.model.value = $(this).children("td:eq(4)").text();
-					window.opener.document.all.modelDetail.value = $(this).children("td:eq(5)").text();
-					window.close();
-    	    	});
-    	    }
+                    $("#table_border tr:gt(0)").remove();
+                    $("#table_border").append(html);
+                    //如果是从"チェック"跳转过来的, 需要将状态1-10隐藏, 只显示状态11-12
+                    if(getQueryString("target") == "check") {
+                        $("#table_border th:gt(7):lt(10)").hide();
+                        $("#table_border tr").find("td:gt(9):lt(10)").hide();
+                    } else {
+                        $("#table_border th:gt(17):lt(2)").hide();
+                        $("#table_border tr").find("td:gt(19):lt(2)").hide();
+                    }
 
-    		$.each(data.totalproperty,function(entryIndex,entry){
-    			recordCount = entry.totalcount;	
-    		});
-    		
-    		//调用用分页函数，将分页插件绑定到id为Pagination的div上
-    	    $("#Pagination").pagination(recordCount, { //recordCount在后台定义的一个公有变量，通过从数据库获取行数，返回全部的行数
-        	    callback: initPageCallback,  //点击分页，调用的毁掉函数
-        	    prev_text: '上一页',  //展示上一页按钮的文本
-        	    next_text: '下一页',  //展示下一页按钮的文本
-        	    items_per_page:pageCount,  //展示的页数
-        	    num_display_entries:10,  //分页插件中显示的按钮数目
-        	    current_page:pageIndex,  //当前页索引
-        	    num_edge_entries:1  //分页插件左右两边表示的按页数目
-    	    });
-  	   	    $("#totalPage").html("<span style='font-size: 100%;color:#A17B20'>总共："+recordCount+"条</span>");
-  	  	  	//隐藏遮照
-    		hideLoading();
-		}
-	});  
+                    //如果是从"快速入库"跳转过来的,为tr绑定双击关闭事件
+                    if(getQueryString("target") == "blank") {
+                        $("#table_border tr:gt(0)").dblclick(function(){
+                            window.opener.document.all.model.value = $(this).children("td:eq(4)").text();
+                            window.opener.document.all.modelDetail.value = $(this).children("td:eq(5)").text();
+                            window.close();
+                        });
+                    }
+
+                    $.each(data.totalproperty,function(entryIndex,entry){
+                        recordCount = entry.totalcount;
+                    });
+
+                    //调用用分页函数，将分页插件绑定到id为Pagination的div上
+                    $("#Pagination").pagination(recordCount, { //recordCount在后台定义的一个公有变量，通过从数据库获取行数，返回全部的行数
+                        callback: initPageCallback,  //点击分页，调用的毁掉函数
+                        prev_text: '上一页',  //展示上一页按钮的文本
+                        next_text: '下一页',  //展示下一页按钮的文本
+                        items_per_page:pageCount,  //展示的页数
+                        num_display_entries:10,  //分页插件中显示的按钮数目
+                        current_page:pageIndex,  //当前页索引
+                        num_edge_entries:1  //分页插件左右两边表示的按页数目
+                    });
+                    $("#totalPage").html("<span style='font-size: 100%;color:#A17B20'>总共："+recordCount+"条</span>");
+                    //隐藏遮照
+                    hideLoading();
+                }
+            });
+        }
+    });
 }
 function initPageCallback(page_id, jq) {
 	initPage(page_id);
@@ -997,4 +998,3 @@ function chkAll(param) {
     </div>
 </body>     
 </html>
-
