@@ -136,83 +136,80 @@ $rs->SetQuery($query);
 $rs->Execute();
 $rowcount=$rs->GetTotalRow();
 $cdh="Vs".str_replace('-','',GetDateMk(date(time())))."-Id".substr(GetCookie('VioomaUserID'), -3)."-".($rowcount+1);
- $rs->close();
+$rs->close();
  
-if ($action=='save'){
+if ($action=='save') {
 
-$bsql=New Dedesql(false);
-$query="select * from #@__sale where rdh='$r_dh' and tantousyaid='".GetCookie('VioomaUserID')."'";
-$bsql->SetQuery($query);
-$bsql->Execute();
-$rowcount=$bsql->GetTotalRow();
-if ($rowcount==0){
- ShowMsg('不正引数、または該当商品がありません。','-1');
- exit();
-}
-else{
- //checkbank();
- $money=0;
- while($row=$bsql->getArray()){
- $money+=$row['number']*$row['sale'];
- $csql=New dedesql(false);
- $csql->setquery("select * from #@__mainkc where p_id='".$row['productid']."'");
- $csql->execute();
- $totalrec=$csql->gettotalrow();
- if($totalrec!=0){
-  $csql->executenonequery("update #@__mainkc set number=number-".$row['number']." where p_id='".$row['productid']."' and l_id='".$row['salelab']."'"
-          . "and l_floor='".$row['labfloor']."' and l_shelf='".$row['labshelf']."' "
-          . "and l_zone='".$row['labzone']."' and l_horizontal='".$row['labhorizontal']."' and l_vertical='".$row['labvertical']."'");
-  }
- }
- $csql->close(); 
- $loginip=getip();
- $logindate=getdatetimemk(time());
- $username=GetCookie('VioomaUserID');
- WriteNote('販売表 '.$r_dh.' を保存しました。',$logindate,$loginip,$username);
- $newsql=New dedesql(false);
- if($transportpay=="") $transportpay=0;
- if($is_report=="1") {
-    $newsql->executenonequery("insert into #@__reportsale(r_dh,r_people,r_date,r_transport,r_whopay,r_transportpay,r_all,r_bank,r_status,r_adid,r_cod,r_chkcod) values('".$r_dh."','".$r_people."','".$r_date."'".",".$transport.",".$whopay.",".$transportpay.",".$money.",".$BANKID.",'0','".$r_people."',".$cod.",'".$chkcod."')");
- }
- if ($whopay==1){
- 	$money=$money-$transportpay;
- }
- $newsql->executenonequery("insert into #@__accounts(atype,amoney,abank,dtime,apeople,atext) values('収入','".$money."','".$BANKID."','".$r_date."','".$r_people."','販売番号".$r_dh."')");
+    $bsql=New Dedesql(false);
+    $query="select * from #@__sale where rdh='$r_dh' and tantousyaid='".GetCookie('VioomaUserID')."'";
+    $bsql->SetQuery($query);
+    $bsql->Execute();
+    $rowcount=$bsql->GetTotalRow();
+    if ($rowcount==0) {
+        ShowMsg('不正引数、または該当商品がありません。','-1');
+        exit();
+    } else {
+        //checkbank();
+        $money=0;
+        while($row=$bsql->getArray()){
+            $money+=$row['number']*$row['sale'];
+            $csql=New dedesql(false);
+            $csql->executenonequery("update #@__mainkc set number=number-".$row['number']." where p_id='".$row['productid']."' and l_id='".$row['salelab']."'"
+                  . "and l_floor='".$row['labfloor']."' and l_shelf='".$row['labshelf']."' "
+                  . "and l_zone='".$row['labzone']."' and l_horizontal='".$row['labhorizontal']."' and l_vertical='".$row['labvertical']."'");
+            $csql->executenonequery("update #@__sale set del_flag = 1 where productid='".$row['productid']);
+        }
+        $csql->close();
+        $loginip=getip();
+        $logindate=getdatetimemk(time());
+        $username=GetCookie('VioomaUserID');
+        WriteNote('販売表 '.$r_dh.' を保存しました。',$logindate,$loginip,$username);
+        $newsql=New dedesql(false);
+        if($transportpay=="") {
+            $transportpay=0;
+        }
+        if($is_report=="1") {
+            $newsql->executenonequery("insert into #@__reportsale(r_dh,r_people,r_date,r_transport,r_whopay,r_transportpay,r_all,r_bank,r_status,r_adid,r_cod,r_chkcod) values('".$r_dh."','".$r_people."','".$r_date."'".",".$transport.",".$whopay.",".$transportpay.",".$money.",".$BANKID.",'0','".$r_people."',".$cod.",'".$chkcod."')");
+        }
+        if ($whopay==1){
+            $money=$money-$transportpay;
+        }
+        $newsql->executenonequery("insert into #@__accounts(atype,amoney,abank,dtime,apeople,atext) values('収入','".$money."','".$BANKID."','".$r_date."','".$r_people."','販売番号".$r_dh."')");
 
- $newsql->executenonequery("update #@__bank set bank_money=bank_money+".$money." where id='".$BANKID."'");
- $newsql->close();
- ShowMsg('該当商品が出庫し、販売されました。','report_sale.php?action=save&type=other&sday='.$r_dh);
-$bsql->close();
-exit();
+        $newsql->executenonequery("update #@__bank set bank_money=bank_money+".$money." where id='".$BANKID."'");
+        $newsql->close();
+        ShowMsg('該当商品が出庫し、販売されました。','report_sale.php?action=save&type=other&sday='.$r_dh);
+        $bsql->close();
+        exit();
     }
-}else if($action=='del'){
- $bsql=New Dedesql(false);
- $query="select * from #@__sale where rdh='$rdh' and tantousyaid='".GetCookie('VioomaUserID')."'";
- $bsql->SetQuery($query);
- $bsql->Execute();
- $rowcount=$bsql->GetTotalRow();
- while($row=$bsql->getArray()){
- $csql=New dedesql(false);
- $csql->setquery("select * from #@__sale where rdh='".$rdh."' and tantousyaid='".GetCookie('VioomaUserID')."'");
- $csql->execute();
- $totalrec=$csql->gettotalrow();
- if($totalrec!=0){
-  $csql->executenonequery("update #@__mainkc set number=number+".$row['number']." where p_id='".$row['productid']."' and l_id='".$row['salelab']."'");
-  }
- }
- $csql->close();
- $newsql=New dedesql(false);
- $newsql->executenonequery("delete from #@__reportsale where id=".$id);
- $newsql->executenonequery("delete from #@__accounts where atype='収入' and atext='販売番号：".$rdh."'");
- if ($whopay==1){
- 	$money=$allmoney-$transportpay;
- }else{
- 	$money=$allmoney;
- }
- $newsql->executenonequery("update #@__bank set bank_money=bank_money-".$money." where id='".$bank."'");
- $newsql->close();
- ShowMsg('該当販売表が削除されました。一覧画面へ遷移します。','sale.php?action=seek');
- 
+} else if($action=='del') {
+    $bsql=New Dedesql(false);
+    $query="select * from #@__sale where rdh='$rdh' and tantousyaid='".GetCookie('VioomaUserID')."'";
+    $bsql->SetQuery($query);
+    $bsql->Execute();
+    $rowcount=$bsql->GetTotalRow();
+    while($row=$bsql->getArray()){
+        $csql=New dedesql(false);
+        $csql->setquery("select * from #@__sale where rdh='".$rdh."' and tantousyaid='".GetCookie('VioomaUserID')."'");
+        $csql->execute();
+        $totalrec=$csql->gettotalrow();
+        if($totalrec!=0){
+            $csql->executenonequery("update #@__mainkc set number=number+".$row['number']." where p_id='".$row['productid']."' and l_id='".$row['salelab']."'");
+        }
+    }
+    $csql->close();
+    $newsql=New dedesql(false);
+    $newsql->executenonequery("delete from #@__reportsale where id=".$id);
+    $newsql->executenonequery("delete from #@__accounts where atype='収入' and atext='販売番号：".$rdh."'");
+    if ($whopay==1) {
+        $money=$allmoney-$transportpay;
+    } else {
+        $money=$allmoney;
+    }
+    $newsql->executenonequery("update #@__bank set bank_money=bank_money-".$money." where id='".$bank."'");
+    $newsql->close();
+    ShowMsg('該当販売表が削除されました。一覧画面へ遷移します。','sale.php?action=seek');
+
 }
 else if($action=='seek'){
 ?>
