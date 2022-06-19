@@ -244,7 +244,7 @@ session_start();
         $userID = $_COOKIE['userID'];
         
         $newsql = new ezSQL_mysql();
-        $query = "INSERT INTO `ynomnc`.`jxc_supplier_storage` (`cp_number`, `cp_name`, `cp_type`, `cp_price`, `cp_count`, `owner`)
+        $query = "INSERT INTO `jxc_supplier_storage` (`cp_number`, `cp_name`, `cp_type`, `cp_price`, `cp_count`, `owner`)
             values('{$cp_number}', '{$cp_name}', '{$cp_type}', '{$cp_price}', '{$cp_count}', '{$userID}')";
         return $newsql->query($query);
     }

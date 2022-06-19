@@ -82,9 +82,6 @@ if ($action=='login')
   }
   else
   {
-      echo "----";
-      echo $row;
-      echo "----";
     //正常登録、データ読み込み可
     $message="正常登録しました。";
     $_SESSION['VioomaUserID']=$username;

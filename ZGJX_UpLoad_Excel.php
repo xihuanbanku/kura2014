@@ -42,7 +42,7 @@ function uploadFile($file, $filetempname) {
         //CONTROL	P_CODE	BAR_CODE	PARENT	MAINKC_NUMBER	MAKER	TITLE	EXAMPLE	DETAIL	BULLET1	BULLET2	BULLET3	BULLET4	BULLET5	BULLET6	
         //CATOGRY	DW	TYPE	PRICE1	PRICE2	PRICE3	PRICE4	S_DATE	E_DATE	JJ	URL	URL1	URL2	URL3	URL4	BROWSE1	BROWSE2	KEYWORD1	KEYWORD2	KEYWORD3	KEYWORD4
         //KEYWORD5	KEYWORD6	KEYWORD7	KEYWORD8   KEYWORD9	KEYWORD10  KID
-        //	L_ID	POSITION	NUMBER	STATE1	STATE2	STATE3	STATE4	STATE5	STATE6	STATE7	STATE8	STATE9	STATE10	NOTE	BZ
+        //	L_ID	POSITION	NUMBER	STATE1	STATE2	STATE3	STATE4	STATE5	STATE6	STATE7	STATE8	STATE9	STATE10	NOTE	BZ  ASIN	V_NUMBER
         $colHead = array();
         for ($k = 0; $k < $highestColumn; $k ++) {
             $columnName = PHPExcel_Cell::stringFromColumnIndex($k);
@@ -157,11 +157,12 @@ function uploadFile($file, $filetempname) {
                     $index=0;
                     $notesql="INSERT INTO `#@__mainkc` (`p_id`, `l_id`, `d_id`, `number`, `l_floor`, `l_shelf`, `l_zone`, `l_horizontal`, `l_vertical`, 
                     `l_state1`, `l_state2`, `l_state3`, `l_state4`, `l_state5`, `l_state6`, `l_state7`, `l_state8`, `l_state9`, `l_state10`, 
-                    `l_note`, `dtime`
+                    `l_note`, `v_number`, `dtime`
                     ) VALUES ('{$strs[$colHead["P_CODE"]]}','{$strs[$colHead["L_ID"]]}','0','{$number}','{$stores[$index++]}',
                     '{$stores[$index++]}', '{$stores[$index++]}', '{$stores[$index++]}', '{$stores[$index++]}',
                     '{$strs[$colHead["STATE1"]]}','{$state2}','{$strs[$colHead["STATE3"]]}','{$strs[$colHead["STATE4"]]}','{$strs[$colHead["STATE5"]]}',
-                    '{$strs[$colHead["STATE6"]]}','{$strs[$colHead["STATE7"]]}','{$strs[$colHead["STATE8"]]}','{$strs[$colHead["STATE9"]]}','{$strs[$colHead["STATE10"]]}','{$strs[$colHead["NOTE"]]}', now()) ";
+                    '{$strs[$colHead["STATE6"]]}','{$strs[$colHead["STATE7"]]}','{$strs[$colHead["STATE8"]]}','{$strs[$colHead["STATE9"]]}','{$strs[$colHead["STATE10"]]}',
+                    '{$strs[$colHead["NOTE"]]}', '{$strs[$colHead["V_NUMBER"]]}', now()) ";
 	                $b2 = $nsql->ExecuteNoneQuery($notesql);
 	                echo mysql_error();
 	                
@@ -250,6 +251,7 @@ function uploadFile($file, $filetempname) {
                 case "u":
                 case "a":
                     $number = trim($strs[$colHead["NUMBER"]]);
+                    $v_number = trim($strs[$colHead["V_NUMBER"]]);
                     if(trim($strs[$colHead["KID"]])) {
     			        $res = $nsql->ExecuteNoneQuery("select `number` + ".($number == "" ? 0 : $number)." from #@__mainkc where kid = '".trim($strs[$colHead["KID"]])."' and p_id = '".$strs[$colHead["P_CODE"]]."'") or die(mysql_errno());
                         if(!mysql_fetch_array($res)) {
@@ -368,7 +370,8 @@ function uploadFile($file, $filetempname) {
                         $notesql .= (trim($strs[$colHead["NOTE"]]) == "" ? "" : "`l_note` ='".trim($strs[$colHead["NOTE"]])."', ");
                         
                         $notesql .= "`number` = `number` + ".(trim($number) == "" ? 0 : trim($number)).",".
-                        " `dtime` = ".(trim($number) > 0 ? '`dtime`' : 'now()');
+                            "`v_number` = `v_number` + ".(trim($v_number) == "" ? 0 : trim($v_number)).",".
+                            " `dtime` = ".(trim($number) > 0 ? '`dtime`' : 'now()');
                         if(trim($strs[$colHead["KID"]])) {
                             $notesql .= "where `kid` = '".trim($strs[$colHead["KID"]])."'";
                         } else {

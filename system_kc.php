@@ -94,7 +94,7 @@ $(function(){
             		var html = "<span><a href='javascript:void(0)' onclick='sort(1," + (entryIndex+11) + ")'>" + entry.p_value + "</a></span>" + 
             	    "<input style=\"display: none;\" name=\"p_value\" type=\"text\" value=\"" + entry.p_value + "\"/>" + 
             	    "<input style=\"display: none;\" name=\"p_name\" type=\"text\" value=\"" + entry.p_name + "\"/>";
-        			$("#table_border tr:eq(0) th:eq("+(entryIndex+8) +")").html(html);
+        			$("#table_border tr:eq(0) th:eq("+(entryIndex+10) +")").html(html);
         		}
     		});
 		    $("#table_border tr:eq(0) th:gt(7):lt(12) span").each(function(i, item){
@@ -422,7 +422,7 @@ function initPage(pageIndex) {
                             +"	<td><input type=\"checkbox\" value=\"" + entry.id + "#" + entry.kid + "\" name=\"strChk[]\">";
                         <?php if(!isset($_REQUEST["sstate12"])) {?>
                         if($("input[name=editA]").val() == "1") {
-                            html+="	<a target=\"_blank\" href=\"system_kc_edit.php?id=" + entry.kid + "&lid=" + entry.l_id + "&n=" + entry.number + "&pid=" + entry.cp_number
+                            html+="	<a target=\"_blank\" href=\"system_kc_edit.php?id=" + entry.kid + "&lid=" + entry.l_id + "&n=" + entry.number + "&v_number=" + entry.v_number + "&pid=" + entry.cp_number
                                 + "&floor=" + entry.l_floor + "&shelf=" + entry.l_shelf + "&zone=" + entry.l_zone + "&horizontal=" + entry.l_horizontal + "&vertical=" + entry.l_vertical + "\">修正</a>";
                         }
                         if($("input[name=deleteA]").val() == "1") {
@@ -437,7 +437,9 @@ function initPage(pageIndex) {
                             +"  <td><input type=\"hidden\" value=\"" + entry.l_id + "\"/><b>" + entry.l_name + "</b></td>"
                             +"  <td>" + entry.l_floor + "-" + entry.l_shelf + "-" + entry.l_zone + "-" + entry.l_horizontal + "-" + entry.l_vertical + "</td>"
                             +"	<td align=\"right\"><font color=\"blue\">￥" + entry.cp_sale1 + "</font></td>"
-                            +"  <td align=\"right\"><font color=\"red\">" + entry.number + "</font></td>"
+                            +"  <td align=\"right\" style='color: blue;" + (entry.number<10 ? "background-color: #FF4C33;" : "background-color: #93FF33;") + "'>" + entry.number + "</td>"
+                            +"  <td align=\"right\" style='color: blue;" + (entry.v_number<10 ? "background-color: #FF4C33;" : "background-color: #93FF33;") +"'>" + entry.v_number + "</td>"
+                            +"  <td align=\"right\" style='color: blue;" + ((parseInt(entry.number) +parseInt(entry.v_number))<10 ? "background-color: #FF4C33;" : "background-color: #93FF33;") +"'>" + (parseInt(entry.number) +parseInt(entry.v_number)) + "</td>"
                             +"  <td>" + entry.s_name1 + "</td>"
                             +"  <td>" + entry.s_name2 + "</td>"
                             +"  <td>" + entry.s_name3 + "</td>"
@@ -792,6 +794,12 @@ function chkAll(param) {
                         <th width="3%">
                             <a href="javascript:void(0);" onclick="sort(this, 3);">在庫数</a>
                         </th>
+                        <th width="3%">
+                            <a href="javascript:void(0);" onclick="sort(this, 37);">仮想数</a>
+                        </th>
+                        <th width="3%">
+                            <a href="javascript:void(0);" onclick="sort(this, 39);">总数</a>
+                        </th>
                         <th width="3%">状1</th>
                         <th width="3%">状2</th>
                         <th width="3%">状3</th>
@@ -966,6 +974,7 @@ function chkAll(param) {
                 <td><label><input type="checkbox" name="columns[]" value="55"/>笔记</label></td>
                 <td><label><input type="checkbox" name="columns[]" value="56"/>備考</label></td>
                 <td><label><input type="checkbox" name="columns[]" value="57"/>ASIN</label></td>
+                <td><label><input type="checkbox" name="columns[]" value="58"/>仮想数</label></td>
             </tr>
         </table>
       <button onclick="out_excel('export')">导出</button>

@@ -85,7 +85,7 @@ define("PAGE_COUNT", 500);
         $query = "select a.id, a.cp_number, a.cp_parent, a.cp_tm, a.cp_name, REPLACE(a.cp_title, ' ', ' ') cp_title, REPLACE(a.cp_detail,'～','~') cp_detail, a.cp_sale1, a.cp_jj,
             b.dtime, f.s_name s_name1, g.s_name s_name2, h.s_name s_name3, i.s_name s_name4, j.s_name s_name5, 
             b.l_state6 s_name6, b.l_state7 s_name7, l.s_name s_name8, b.l_state9 s_name9, b.l_state10 s_name10, k.s_name s_name11, b.l_state12 s_name12,
-            b.l_note,b.l_asin, a.cp_dtime, b.number, b.kid, b.l_id, b.l_floor, b.l_shelf, b.l_zone, b.l_horizontal, b.l_vertical,
+            b.l_note,b.l_asin, a.cp_dtime, b.number, b.v_number, b.kid, b.l_id, b.l_floor, b.l_shelf, b.l_zone, b.l_horizontal, b.l_vertical,
             ifnull(b.col1,0)+ifnull(b.col2,0)+ifnull(b.col3,0)+ifnull(b.col4,0)+ifnull(b.col5,0)+ifnull(b.col6,0) buying_number, b.page_name_id, c.l_name";
         if(empty($_REQUEST["pageCount"])) {
             $query .= ", a.cp_dwname, a.cp_categories, a.cp_categories_down, a.cp_gg, cp_sale, a.cp_saleall,
@@ -101,7 +101,7 @@ define("PAGE_COUNT", 500);
         if($exportType =="export") {
             $query .= ", group_concat(b.l_state1) gc_l_state1, group_concat(b.l_state2) gc_l_state2, group_concat(b.l_state3) gc_l_state3, group_concat(b.l_state4) gc_l_state4, group_concat(case b.l_state5 when 20 then 0 when 22 then 8 when 24 then 7 else b.l_state5 end) gc_l_state5,
                 group_concat(b.l_state6) gc_l_state6, group_concat(b.l_state7) gc_l_state7, group_concat(b.l_state8) gc_l_state8, group_concat(b.l_state9) gc_l_state9, group_concat(b.l_state10) gc_l_state10,
-                group_concat(b.l_asin) gc_l_asin, group_concat(b.l_note) gc_l_note, group_concat(b.number) gc_number, group_concat(b.kid) gc_kid, group_concat(b.l_id) gc_l_id, group_concat(concat(b.l_floor,'-', b.l_shelf,'-', b.l_zone, '-',b.l_horizontal,'-', b.l_vertical)) gc_pos";
+                group_concat(b.l_asin) gc_l_asin, group_concat(b.l_note) gc_l_note, group_concat(b.number) gc_number, group_concat(b.v_number) gc_v_number, group_concat(b.kid) gc_kid, group_concat(b.l_id) gc_l_id, group_concat(concat(b.l_floor,'-', b.l_shelf,'-', b.l_zone, '-',b.l_horizontal,'-', b.l_vertical)) gc_pos";
             
         }
         $query .= "  from jxc_basic a, jxc_mainkc b, jxc_lab c, jxc_categories d, jxc_categories e,
@@ -343,6 +343,18 @@ define("PAGE_COUNT", 500);
                     $sort=($sort-12)/2+1;
                     $query .= " order by l_state{$sort}+0 desc";
                 break;
+                case 37:
+                    $query .= " order by b.v_number";
+                    break;
+                case 38:
+                    $query .= " order by b.v_number desc";
+                    break;
+                case 39:
+                    $query .= " order by (b.number + b.v_number)";
+                    break;
+                case 40:
+                    $query .= " order by (b.number + b.v_number) desc";
+                    break;
                 default:
                     $query .= " order by a.cp_number";
                 break;
@@ -1167,7 +1179,7 @@ define("PAGE_COUNT", 500);
                     "BULLET4","BULLET5","BULLET6","CATOGRY","DW","TYPE","PRICE1","PRICE2","PRICE3","PRICE4","S_DATE","E_DATE","JJ","URL","URL1",
                     "URL2","URL3","URL4","BROWSE1","BROWSE2","KEYWORD1","KEYWORD2","KEYWORD3","KEYWORD4","KEYWORD5","KEYWORD6","KEYWORD7",
                     "KEYWORD8","KEYWORD9","KEYWORD10","KID","L_ID","POSITION","NUMBER",
-                    "STATE1","STATE2","STATE3","STATE4","STATE5","STATE6","STATE7","STATE8","STATE9","STATE10","NOTE","BZ","ASIN");
+                    "STATE1","STATE2","STATE3","STATE4","STATE5","STATE6","STATE7","STATE8","STATE9","STATE10","NOTE","BZ","ASIN","V_NUMBER");
                 for ($i=0;$i<count($array); $i++) {
 					if($columnsArray[$i]){
 						$csv_data .= $array[$i].TAB;
@@ -1179,7 +1191,7 @@ define("PAGE_COUNT", 500);
 							"メーカー希望小売価格","メーカー希望卸売価格","販売価格","生産日付","廃棄日付","仕入先","メインURL"," サブURL1","サブURL2","サブURL3","サブURL4",
 							"推奨ブラウズノード1","推奨ブラウズノード2","キーワード1","キーワード2","キーワード3","キーワード4","キーワード5","キーワード6",
                             "キーワード7","キーワード8","キーワード9","キーワード10","mainkc_id","倉庫号","在庫位置","在庫数",
-                            "状態1","状態2","状態3","状態4","状態5","状態6","状態7","状態8","状態9","状態10","注釈","備考","ASIN");
+                            "状態1","状態2","状態3","状態4","状態5","状態6","状態7","状態8","状態9","状態10","注釈","備考","ASIN","仮想数");
                 for ($i=0;$i<count($array); $i++) {
 					if($columnsArray[$i]){
 						$csv_data .= iconv("utf-8", "Shift_jis", $array[$i]).TAB;
@@ -1364,6 +1376,9 @@ define("PAGE_COUNT", 500);
                             }
                             if($columnsArray[$index++]) {
                                 $csv_data .= '"'.$bean['gc_l_asin'].'"'.TAB;
+                            }
+                            if($columnsArray[$index++]) {
+                                $csv_data .= '"'.$bean['gc_v_number'].'"'.TAB;
                             }
                             $csv_data .= "\n";
                             $index =0;

@@ -16,6 +16,7 @@ require_once(dirname(__FILE__)."/include/checklogin.php");
 <script language="javascript">
 function chkInput() {
     number = document.forms[0].kc_number.value;
+    v_number = document.forms[0].kc_number.v_number;
     floor = document.forms[0].kc_floor.value;
     shelf = document.forms[0].kc_shelf.value;
     zone = document.forms[0].kc_zone.value;
@@ -26,7 +27,11 @@ function chkInput() {
     alert('正しい入庫数を入力してください。');
     return false;
     }
-    
+
+    if(v_number=='' || (!isInteger(v_number)) || v_number<=0){
+    alert('正しい仮想数を入力してください。');
+    return false;
+    }
     if(floor==''){
     alert('位置-->階を入力してください。');
     return false;
@@ -84,7 +89,7 @@ if ($rowcount==0){
 }
 else
 {
- $bsql->executenonequery("update #@__mainkc set number='$kc_number',l_floor='$kc_floor',"
+ $bsql->executenonequery("update #@__mainkc set number='$kc_number',v_number='$v_number',l_floor='$kc_floor',"
          . "l_shelf='$kc_shelf',l_zone='$kc_zone',l_horizontal='$kc_horizontal',l_vertical='$kc_vertical' where kid='".$id."'");
  $loginip=getip();
  $logindate=getdatetimemk(time());
@@ -159,6 +164,20 @@ exit();
     <td>&nbsp;<input type="text" class="<?php echo $styleClass; ?>" <?php echo $readonly; ?> name="kc_number" size="5" value="<?php echo $n; ?>">&nbsp;<?php echo get_name(get_name($pid,'dwname'),'dw')?>
 	</td>
   </tr> 
+  <tr>
+    <td class="cellcolor" width="30%">仮想数：<br></td>
+    <?php
+        $rank = GetCookie("rank");
+        $readonly = "";
+        $styleClass = "";
+        if ($rank != 1 and $rank != 100 and $rank != 105) {
+            $readonly = "readonly";
+            $styleClass = "rtext";
+        }
+    ?>
+    <td>&nbsp;<input type="text" class="<?php echo $styleClass; ?>" <?php echo $readonly; ?> name="v_number" size="5" value="<?php echo $v_number; ?>">&nbsp;<?php echo get_name(get_name($pid,'dwname'),'dw')?>
+	</td>
+  </tr>
   <tr>
     <td class="cellcolor" width="30%">位置：<br></td>
     <td>
