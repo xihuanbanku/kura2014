@@ -370,7 +370,7 @@ function uploadFile($file, $filetempname) {
                         $notesql .= (trim($strs[$colHead["NOTE"]]) == "" ? "" : "`l_note` ='".trim($strs[$colHead["NOTE"]])."', ");
                         
                         $notesql .= "`number` = `number` + ".(trim($number) == "" ? 0 : trim($number)).",".
-                            "`v_number` = `v_number` + ".(trim($v_number) == "" ? 0 : trim($v_number)).",".
+                            "`v_number` = (case when `number` + ".(trim($number) == "" ? 0 : trim($number)) ." <= 0 then 0 else `v_number` + ".(trim($v_number) == "" ? 0 : trim($v_number))." end),".
                             " `dtime` = ".(trim($number) > 0 ? '`dtime`' : 'now()');
                         if(trim($strs[$colHead["KID"]])) {
                             $notesql .= "where `kid` = '".trim($strs[$colHead["KID"]])."'";

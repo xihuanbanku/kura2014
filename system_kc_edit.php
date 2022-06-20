@@ -15,46 +15,45 @@ require_once(dirname(__FILE__)."/include/checklogin.php");
 </style>
 <script language="javascript">
 function chkInput() {
-    number = document.forms[0].kc_number.value;
-    v_number = document.forms[0].kc_number.v_number;
-    floor = document.forms[0].kc_floor.value;
-    shelf = document.forms[0].kc_shelf.value;
-    zone = document.forms[0].kc_zone.value;
-    horizontal = document.forms[0].kc_horizontal.value;
-    vertical = document.forms[0].kc_vertical.value;
-    
-    if(number=='' || (!isInteger(number)) || number<=0){
-    alert('正しい入庫数を入力してください。');
-    return false;
+    var number = document.forms[0].kc_number.value;
+    var v_number = document.forms[0].v_number.value;
+    var floor = document.forms[0].kc_floor.value;
+    var shelf = document.forms[0].kc_shelf.value;
+    var zone = document.forms[0].kc_zone.value;
+    var horizontal = document.forms[0].kc_horizontal.value;
+    var vertical = document.forms[0].kc_vertical.value;
+
+    if (isNaN(number) || number < 0) {
+        alert('正しい入庫数を入力してください。');
+        return false;
     }
 
-    if(v_number=='' || (!isInteger(v_number)) || v_number<=0){
-    alert('正しい仮想数を入力してください。');
-    return false;
+    if (isNaN(v_number) || (number <= 0 && v_number > 0) || v_number < 0) {
+        alert('正しい仮想数を入力してください。');
+        return false;
     }
-    if(floor==''){
-    alert('位置-->階を入力してください。');
-    return false;
+    if (floor == '') {
+        alert('位置-->階を入力してください。');
+        return false;
     }
-    alert(floor);
-    if(shelf==''){
-    alert('位置-->棚を入力してください。');
-    return false;
+    if (shelf == '') {
+        alert('位置-->棚を入力してください。');
+        return false;
     }
-    if(zone==''){
-    alert('位置-->ゾーンを入力してください。');
-    return false;
+    if (zone == '') {
+        alert('位置-->ゾーンを入力してください。');
+        return false;
     }
-    if(horizontal==''){
-    alert('位置-->横を入力してください。');
-    return false;
+    if (horizontal == '') {
+        alert('位置-->横を入力してください。');
+        return false;
     }
-    if(vertical==''){
-    alert('位置-->縦を入力してください。');
-    return false;
+    if (vertical == '') {
+        alert('位置-->縦を入力してください。');
+        return false;
     }
-    
 }
+
 function backlist() {
     action = document.forms[0].p_actions.value;
     labid = document.forms[0].p_labid.value;
@@ -67,43 +66,42 @@ function backlist() {
     if (sorting == "") {
         sorting = "desc";
     }
-    window.location.href='system_kc.php?action='+action+'&labid='+labid+'&cp_categories='+cp_categories
-            +'&cp_categories_down='+cp_categories_down+'&sort='+sort+'&stext='+stext+'&sorting='+sorting+'&sortkbn='+sortkbn;
+    window.location.href = 'system_kc.php?action=' + action + '&labid=' + labid + '&cp_categories=' + cp_categories
+        + '&cp_categories_down=' + cp_categories_down + '&sort=' + sort + '&stext=' + stext + '&sorting=' + sorting + '&sortkbn=' + sortkbn;
 }
 </script>
 </head>
 <?php
-if ($action=='save'){
- if($kc_number=='' || $id==''){
- showmsg('引数エラー','-1');
- exit();
- }
-$bsql=New Dedesql(false);
-$query="select * from #@__mainkc where kid='$id'";
-$bsql->SetQuery($query);
-$bsql->Execute();
-$rowcount=$bsql->GetTotalRow();
-if ($rowcount==0){
- ShowMsg('引数不正、または該当商品がありません。','-1');
- exit();
-}
-else
-{
- $bsql->executenonequery("update #@__mainkc set number='$kc_number',v_number='$v_number',l_floor='$kc_floor',"
-         . "l_shelf='$kc_shelf',l_zone='$kc_zone',l_horizontal='$kc_horizontal',l_vertical='$kc_vertical' where kid='".$id."'");
- $loginip=getip();
- $logindate=getdatetimemk(time());
- $username=Getcookie('VioomaUserID');
- WriteNote('商品'.$pid.'をmain_kc修正しました。',$logindate,$loginip,$username);
- ShowMsg('商品情報を修正しました。','system_kc.php');
-$bsql->close();
-exit();
+if ($action == 'save'){
+    if ($kc_number == '' || $id == '') {
+        showmsg('引数エラー', '-1');
+        exit();
+    }
+    $bsql = New Dedesql(false);
+    $query = "select * from #@__mainkc where kid='$id'";
+    $bsql->SetQuery($query);
+    $bsql->Execute();
+    $rowcount = $bsql->GetTotalRow();
+    if ($rowcount == 0) {
+        ShowMsg('引数不正、または該当商品がありません。', '-1');
+        exit();
+    } else {
+        $bsql->executenonequery("update #@__mainkc set number='$kc_number',v_number='$v_number',l_floor='$kc_floor',"
+            . "l_shelf='$kc_shelf',l_zone='$kc_zone',l_horizontal='$kc_horizontal',l_vertical='$kc_vertical' where kid='" . $id . "'");
+        $loginip = getip();
+        $logindate = getdatetimemk(time());
+        $username = Getcookie('VioomaUserID');
+        WriteNote('商品' . $pid . 'をmain_kc修正しました。', $logindate, $loginip, $username);
+        ShowMsg('商品情報を修正しました。', 'system_kc.php');
+        $bsql->close();
+        exit();
     }
 }
- else{
- if($id=='' || $lid==''){
- echo "<script language='javascript'>alert('不正な引数');history.go(-1);</script>";
- exit();}
+else{
+if ($id == '' || $lid == '') {
+    echo "<script language='javascript'>alert('不正な引数');history.go(-1);</script>";
+    exit();
+}
 ?>
 <body onload="form1.seek_text.focus()">
 <table width="100%" border="0" id="table_style_all" cellpadding="0" cellspacing="0">
@@ -118,7 +116,7 @@ exit();
 	<table width="100%" border="0" cellpadding="0" cellspacing="2">
      <tr>
       <td><strong><strong>&nbsp;在庫商品修正</strong>&nbsp;&nbsp;
-              - <input type="button" value="商品在庫一覧へ戻る" onClick="backlist();"> 
+              - <input type="button" value="商品在庫一覧へ戻る" onClick="backlist();">
       </td>
      </tr>
      <tr>
@@ -144,15 +142,15 @@ exit();
             (商品情報修正はこちらへ → <a href="system_basic_edit.php?formCd=kc&id=<?php echo $pid; ?>"><font color="red"><b>商品情報</b></font></a>)
 	<input type="hidden" name="seek_number" value=""/>
 	</td>
-  </tr> 
+  </tr>
   <tr>
     <td class="cellcolor" width="30%">倉庫：<br></td>
     <td>&nbsp;<?php echo get_name($lid,'lab') ?>
 	</td>
-  </tr> 
+  </tr>
   <tr>
     <td class="cellcolor" width="30%">現在庫数：<br></td>
-    <?php 
+    <?php
         $rank = GetCookie("rank");
         $readonly = "";
         $styleClass = "";
@@ -163,7 +161,7 @@ exit();
     ?>
     <td>&nbsp;<input type="text" class="<?php echo $styleClass; ?>" <?php echo $readonly; ?> name="kc_number" size="5" value="<?php echo $n; ?>">&nbsp;<?php echo get_name(get_name($pid,'dwname'),'dw')?>
 	</td>
-  </tr> 
+  </tr>
   <tr>
     <td class="cellcolor" width="30%">仮想数：<br></td>
     <?php
@@ -192,7 +190,7 @@ exit();
    <td colspan="2">
    &nbsp;その他情報： <font color=red><?php echo "型番・詳細：".get_name($pid,'gg')."  分類：".get_name(get_name($pid,'bcate'),'categories')."->".get_name(get_name($pid,'scate'),'categories');?></font>
    </td>
-  </tr> 
+  </tr>
   <tr>
     <td class="cellcolor">&nbsp;</td>
     <td>&nbsp;<input type="submit" onclick="return chkInput();" value="<?php echo get_name($pid,'name')?>の情報を保存"></td>

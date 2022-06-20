@@ -798,7 +798,7 @@ function chkAll(param) {
                             <a href="javascript:void(0);" onclick="sort(this, 37);">仮想数</a>
                         </th>
                         <th width="3%">
-                            <a href="javascript:void(0);" onclick="sort(this, 39);">总数</a>
+                            <a href="javascript:void(0);" onclick="sort(this, 39);">更新用在庫</a>
                         </th>
                         <th width="3%">状1</th>
                         <th width="3%">状2</th>
@@ -975,6 +975,7 @@ function chkAll(param) {
                 <td><label><input type="checkbox" name="columns[]" value="56"/>備考</label></td>
                 <td><label><input type="checkbox" name="columns[]" value="57"/>ASIN</label></td>
                 <td><label><input type="checkbox" name="columns[]" value="58"/>仮想数</label></td>
+                <td><label><input type="checkbox" name="columns[]" value="59"/>更新用在庫</label></td>
             </tr>
         </table>
       <button onclick="out_excel('export')">导出</button>
