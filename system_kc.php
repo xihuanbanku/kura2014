@@ -423,7 +423,8 @@ function initPage(pageIndex) {
                         <?php if(!isset($_REQUEST["sstate12"])) {?>
                         if($("input[name=editA]").val() == "1") {
                             html+="	<a target=\"_blank\" href=\"system_kc_edit.php?id=" + entry.kid + "&lid=" + entry.l_id + "&n=" + entry.number + "&v_number=" + entry.v_number + "&pid=" + entry.cp_number
-                                + "&floor=" + entry.l_floor + "&shelf=" + entry.l_shelf + "&zone=" + entry.l_zone + "&horizontal=" + entry.l_horizontal + "&vertical=" + entry.l_vertical + "\">修正</a>";
+                                + "&floor=" + entry.l_floor + "&shelf=" + entry.l_shelf + "&zone=" + entry.l_zone + "&horizontal=" + entry.l_horizontal + "&vertical=" + entry.l_vertical
+                                + "&p_kid=" + entry.p_kid + "&package_size=" + entry.package_size + "\">修正</a>";
                         }
                         if($("input[name=deleteA]").val() == "1") {
                             html+="|<a onclick=\"submitChk(" + entry.kid + ",'" + entry.cp_number + "')\" href=\"#\">削除</a>";
@@ -467,8 +468,8 @@ function initPage(pageIndex) {
                         $("#table_border th:gt(7):lt(10)").hide();
                         $("#table_border tr").find("td:gt(9):lt(10)").hide();
                     } else {
-                        $("#table_border th:gt(17):lt(2)").hide();
-                        $("#table_border tr").find("td:gt(19):lt(2)").hide();
+                        $("#table_border th:gt(19):lt(2)").hide();
+                        $("#table_border tr").find("td:gt(21):lt(2)").hide();
                     }
 
                     //如果是从"快速入库"跳转过来的,为tr绑定双击关闭事件
@@ -976,6 +977,10 @@ function chkAll(param) {
                 <td><label><input type="checkbox" name="columns[]" value="57"/>ASIN</label></td>
                 <td><label><input type="checkbox" name="columns[]" value="58"/>仮想数</label></td>
                 <td><label><input type="checkbox" name="columns[]" value="59"/>更新用在庫</label></td>
+            </tr>
+            <tr>
+                <td><label><input type="checkbox" name="columns[]" value="60"/>父级关联K_ID</label></td>
+                <td><label><input type="checkbox" name="columns[]" value="61"/>组合系数</label></td>
             </tr>
         </table>
       <button onclick="out_excel('export')">导出</button>

@@ -42,7 +42,7 @@ function uploadFile($file, $filetempname) {
         //CONTROL	P_CODE	BAR_CODE	PARENT	MAINKC_NUMBER	MAKER	TITLE	EXAMPLE	DETAIL	BULLET1	BULLET2	BULLET3	BULLET4	BULLET5	BULLET6	
         //CATOGRY	DW	TYPE	PRICE1	PRICE2	PRICE3	PRICE4	S_DATE	E_DATE	JJ	URL	URL1	URL2	URL3	URL4	BROWSE1	BROWSE2	KEYWORD1	KEYWORD2	KEYWORD3	KEYWORD4
         //KEYWORD5	KEYWORD6	KEYWORD7	KEYWORD8   KEYWORD9	KEYWORD10  KID
-        //	L_ID	POSITION	NUMBER	STATE1	STATE2	STATE3	STATE4	STATE5	STATE6	STATE7	STATE8	STATE9	STATE10	NOTE	BZ  ASIN	V_NUMBER
+        //	L_ID	POSITION	NUMBER	STATE1	STATE2	STATE3	STATE4	STATE5	STATE6	STATE7	STATE8	STATE9	STATE10	NOTE	BZ  ASIN	V_NUMBER	P_KID	PACKAGE_SIZE
         $colHead = array();
         for ($k = 0; $k < $highestColumn; $k ++) {
             $columnName = PHPExcel_Cell::stringFromColumnIndex($k);
@@ -157,12 +157,12 @@ function uploadFile($file, $filetempname) {
                     $index=0;
                     $notesql="INSERT INTO `#@__mainkc` (`p_id`, `l_id`, `d_id`, `number`, `l_floor`, `l_shelf`, `l_zone`, `l_horizontal`, `l_vertical`, 
                     `l_state1`, `l_state2`, `l_state3`, `l_state4`, `l_state5`, `l_state6`, `l_state7`, `l_state8`, `l_state9`, `l_state10`, 
-                    `l_note`, `v_number`, `dtime`
+                    `l_note`, `v_number`, `p_kid`, `package_size`, `dtime`
                     ) VALUES ('{$strs[$colHead["P_CODE"]]}','{$strs[$colHead["L_ID"]]}','0','{$number}','{$stores[$index++]}',
                     '{$stores[$index++]}', '{$stores[$index++]}', '{$stores[$index++]}', '{$stores[$index++]}',
                     '{$strs[$colHead["STATE1"]]}','{$state2}','{$strs[$colHead["STATE3"]]}','{$strs[$colHead["STATE4"]]}','{$strs[$colHead["STATE5"]]}',
                     '{$strs[$colHead["STATE6"]]}','{$strs[$colHead["STATE7"]]}','{$strs[$colHead["STATE8"]]}','{$strs[$colHead["STATE9"]]}','{$strs[$colHead["STATE10"]]}',
-                    '{$strs[$colHead["NOTE"]]}', '{$strs[$colHead["V_NUMBER"]]}', now()) ";
+                    '{$strs[$colHead["NOTE"]]}', '{$strs[$colHead["V_NUMBER"]]}', '{$strs[$colHead["P_KID"]]}', '{$strs[$colHead["PACKAGE_SIZE"]]}', now()) ";
 	                $b2 = $nsql->ExecuteNoneQuery($notesql);
 	                echo mysql_error();
 	                
@@ -287,6 +287,17 @@ function uploadFile($file, $filetempname) {
                             break 2;
                         }
                     }
+                    if(trim($strs[$colHead["P_KID"]])) {
+                        $res = $nsql->ExecuteNoneQuery("select `number` from #@__mainkc where kid = '" . trim($strs[$colHead["P_KID"]]) . "'") or die(mysql_errno());
+                        if (!mysql_fetch_array($res)) {
+                            $nsql->rollback();
+                            echo mysql_error();
+                            $importStat["m"] = 1;
+                            echo date("Ymd-H:i:s") . "----B|" . $j . "出现错误[记录无效，无法完成操作]--- 关联main_kc ID:" . $strs[$colHead["P_KID"]];
+                            error_log(date("Ymd-H:i:s") . "----B|" . $j . "出现错误[记录无效，无法完成操作]--- 关联main_kc ID:" . $strs[$colHead["P_KID"]] . "\n", 3, "logs/upload.log");
+                            break 2;
+                        }
+                    }
                     $notesql="update `#@__basic` set";
 
                     ($strs[$colHead["PARENT"]] = trim($strs[$colHead["PARENT"]])) == "" ? $notesql.="" : $notesql.="`cp_parent` ='".$strs[$colHead["PARENT"]]."',";
@@ -368,10 +379,15 @@ function uploadFile($file, $filetempname) {
                         $notesql .= (trim($strs[$colHead["STATE8"]]) == "" ? "" : "`l_state8` ='".trim($strs[$colHead["STATE8"]])."',");
                         $notesql .= (trim($strs[$colHead["STATE9"]]) == "" ? "" : "`l_state9` ='".trim($strs[$colHead["STATE9"]])."',");
                         $notesql .= (trim($strs[$colHead["NOTE"]]) == "" ? "" : "`l_note` ='".trim($strs[$colHead["NOTE"]])."', ");
-                        
+
+
                         $notesql .= "`number` = `number` + ".(trim($number) == "" ? 0 : trim($number)).",".
-                            "`v_number` = (case when `number` + ".(trim($number) == "" ? 0 : trim($number)) ." <= 0 then 0 else `v_number` + ".(trim($v_number) == "" ? 0 : trim($v_number))." end),".
-                            " `dtime` = ".(trim($number) > 0 ? '`dtime`' : 'now()');
+                            "`v_number` = (case when `number` + ".(trim($number) == "" ? 0 : trim($number)) ." <= 0 then 0 else `v_number` + ".(trim($v_number) == "" ? 0 : trim($v_number))." end),";
+                        if(trim($strs[$colHead["P_KID"]])) {
+                            $notesql .= " p_kid = " . trim($strs[$colHead["P_KID"]]) . "," .
+                            " package_size = " . trim($strs[$colHead["PACKAGE_SIZE"]]) . ",";
+                        }
+                        $notesql .= " `dtime` = ".(trim($number) > 0 ? '`dtime`' : 'now()');
                         if(trim($strs[$colHead["KID"]])) {
                             $notesql .= "where `kid` = '".trim($strs[$colHead["KID"]])."'";
                         } else {
@@ -382,14 +398,24 @@ function uploadFile($file, $filetempname) {
                         
                         //根据子商品id 更新父商品数量也做相应的加减
                         if(trim($number) < 0) {
-                            $notesql="update `#@__mainkc` set ";
-                            $notesql .= "`number` = `number` + ".trim($number).",".
-                            " `dtime` = now()
-                            where p_id = (select cp_parent from #@__basic where cp_number = '".trim($strs[$colHead["P_CODE"]])."')";
+                            $notesql="update `#@__mainkc` set ".
+                                "`number` = `number` + ".trim($number).",".
+                                " `dtime` = now()".
+                                " where p_id = (select cp_parent from #@__basic where cp_number = '".trim($strs[$colHead["P_CODE"]])."')";
                             $b2 = $nsql->ExecuteNoneQuery($notesql);
                             echo mysql_error();
                         }
-						
+
+                        // 根据packe_size计算子类的数量
+                        if(trim($strs[$colHead["P_KID"]])) {
+                            $notesql="update `#@__mainkc` set ".
+                                "`number` = (select * from (select `number` / ".trim($strs[$colHead["PACKAGE_SIZE"]]). " from `#@__mainkc` where kid = '".trim($strs[$colHead["P_KID"]])."') t1),".
+                                " `dtime` = now()".
+                                " where kid = '".trim($strs[$colHead["KID"]])."'";
+                            $b2 = $nsql->ExecuteNoneQuery($notesql);
+                            echo mysql_error();
+                        }
+
                         $index=0;
 					    //根据操作类型更新s_type, 0=正常贩卖报告,1=amazon
 					    $s_type = ($strs[0] == "u" ? 0 : 1);

@@ -22,6 +22,8 @@ function chkInput() {
     var zone = document.forms[0].kc_zone.value;
     var horizontal = document.forms[0].kc_horizontal.value;
     var vertical = document.forms[0].kc_vertical.value;
+    var p_kid = document.forms[0].p_kid.value;
+    var package_size = document.forms[0].package_size.value;
 
     if (isNaN(number) || number < 0) {
         alert('正しい入庫数を入力してください。');
@@ -52,6 +54,14 @@ function chkInput() {
         alert('位置-->縦を入力してください。');
         return false;
     }
+    if (p_kid == '') {
+        alert('父级关联K_IDを入力してください。');
+        return false;
+    }
+    if (package_size == '') {
+        alert('组合系数を入力してください。');
+        return false;
+    }
 }
 
 function backlist() {
@@ -78,23 +88,47 @@ if ($action == 'save'){
         exit();
     }
     $bsql = New Dedesql(false);
-    $query = "select * from #@__mainkc where kid='$id'";
-    $bsql->SetQuery($query);
-    $bsql->Execute();
-    $rowcount = $bsql->GetTotalRow();
-    if ($rowcount == 0) {
-        ShowMsg('引数不正、または該当商品がありません。', '-1');
-        exit();
+    if($p_kid > 0) {
+        $query = "select * from #@__mainkc where kid in ($id, $p_kid)";
+        $bsql->SetQuery($query);
+        $bsql->Execute();
+        $rowcount = $bsql->GetTotalRow();
+        if ($rowcount < 2) {
+            ShowMsg('引数不正、または該当商品がありません。', '-1');
+            exit();
+        } else {
+            if($package_size <= 0) {
+                $package_size=1;
+            }
+            $bsql->executenonequery("update #@__mainkc set number=(select * from (select number/$package_size from #@__mainkc where kid =$p_kid) t1),v_number='$v_number',p_kid='$p_kid',package_size='$package_size',l_floor='$kc_floor',"
+                . "l_shelf='$kc_shelf',l_zone='$kc_zone',l_horizontal='$kc_horizontal',l_vertical='$kc_vertical' where kid='" . $id . "'");
+            $loginip = getip();
+            $logindate = getdatetimemk(time());
+            $username = Getcookie('VioomaUserID');
+            WriteNote('商品' . $pid . 'をmain_kc修正しました。', $logindate, $loginip, $username);
+            ShowMsg('商品情報を修正しました。', 'system_kc.php');
+            $bsql->close();
+            exit();
+        }
     } else {
-        $bsql->executenonequery("update #@__mainkc set number='$kc_number',v_number='$v_number',l_floor='$kc_floor',"
-            . "l_shelf='$kc_shelf',l_zone='$kc_zone',l_horizontal='$kc_horizontal',l_vertical='$kc_vertical' where kid='" . $id . "'");
-        $loginip = getip();
-        $logindate = getdatetimemk(time());
-        $username = Getcookie('VioomaUserID');
-        WriteNote('商品' . $pid . 'をmain_kc修正しました。', $logindate, $loginip, $username);
-        ShowMsg('商品情報を修正しました。', 'system_kc.php');
-        $bsql->close();
-        exit();
+        $query = "select * from #@__mainkc where kid='$id'";
+        $bsql->SetQuery($query);
+        $bsql->Execute();
+        $rowcount = $bsql->GetTotalRow();
+        if ($rowcount == 0) {
+            ShowMsg('引数不正、または該当商品がありません。', '-1');
+            exit();
+        } else {
+            $bsql->executenonequery("update #@__mainkc set number='$kc_number',v_number='$v_number',l_floor='$kc_floor',"
+                . "l_shelf='$kc_shelf',l_zone='$kc_zone',l_horizontal='$kc_horizontal',l_vertical='$kc_vertical' where kid='" . $id . "'");
+            $loginip = getip();
+            $logindate = getdatetimemk(time());
+            $username = Getcookie('VioomaUserID');
+            WriteNote('商品' . $pid . 'をmain_kc修正しました。', $logindate, $loginip, $username);
+            ShowMsg('商品情報を修正しました。', 'system_kc.php');
+            $bsql->close();
+            exit();
+        }
     }
 }
 else{
@@ -174,6 +208,34 @@ if ($id == '' || $lid == '') {
         }
     ?>
     <td>&nbsp;<input type="text" class="<?php echo $styleClass; ?>" <?php echo $readonly; ?> name="v_number" size="5" value="<?php echo $v_number; ?>">&nbsp;<?php echo get_name(get_name($pid,'dwname'),'dw')?>
+	</td>
+  </tr>
+  <tr>
+    <td class="cellcolor" width="30%">父级关联K_ID：<br></td>
+    <?php
+        $rank = GetCookie("rank");
+        $readonly = "";
+        $styleClass = "";
+        if ($rank != 1 and $rank != 100 and $rank != 105) {
+            $readonly = "readonly";
+            $styleClass = "rtext";
+        }
+    ?>
+    <td>&nbsp;<input type="text" class="<?php echo $styleClass; ?>" <?php echo $readonly; ?> name="p_kid" size="5" value="<?php echo $p_kid; ?>">
+	</td>
+  </tr>
+  <tr>
+    <td class="cellcolor" width="30%">组合系数：<br></td>
+    <?php
+        $rank = GetCookie("rank");
+        $readonly = "";
+        $styleClass = "";
+        if ($rank != 1 and $rank != 100 and $rank != 105) {
+            $readonly = "readonly";
+            $styleClass = "rtext";
+        }
+    ?>
+    <td>&nbsp;<input type="number" class="<?php echo $styleClass; ?>" <?php echo $readonly; ?> name="package_size" size="5" value="<?php echo $package_size; ?>">
 	</td>
   </tr>
   <tr>
