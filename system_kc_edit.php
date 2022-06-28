@@ -100,7 +100,7 @@ if ($action == 'save'){
             if($package_size <= 0) {
                 $package_size=1;
             }
-            $bsql->executenonequery("update #@__mainkc set number=(select * from (select number/$package_size from #@__mainkc where kid =$p_kid) t1),v_number='$v_number',p_kid='$p_kid',package_size='$package_size',l_floor='$kc_floor',"
+            $bsql->executenonequery("update #@__mainkc set number=(select * from (select floor(number/$package_size) from #@__mainkc where kid =$p_kid) t1),v_number='$v_number',p_kid='$p_kid',package_size='$package_size',l_floor='$kc_floor',"
                 . "l_shelf='$kc_shelf',l_zone='$kc_zone',l_horizontal='$kc_horizontal',l_vertical='$kc_vertical' where kid='" . $id . "'");
             $loginip = getip();
             $logindate = getdatetimemk(time());
@@ -121,6 +121,8 @@ if ($action == 'save'){
         } else {
             $bsql->executenonequery("update #@__mainkc set number='$kc_number',v_number='$v_number',l_floor='$kc_floor',"
                 . "l_shelf='$kc_shelf',l_zone='$kc_zone',l_horizontal='$kc_horizontal',l_vertical='$kc_vertical' where kid='" . $id . "'");
+            // 更新子类数量
+            $bsql->executenonequery("update #@__mainkc set number='$kc_number' / package_size where p_kid='" . $id . "'");
             $loginip = getip();
             $logindate = getdatetimemk(time());
             $username = Getcookie('VioomaUserID');

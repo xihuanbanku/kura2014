@@ -418,7 +418,7 @@ function initPage(pageIndex) {
                     var html="";
                     $.each(data.results, function(entryIndex, entry){
                         //         			alert(entry.id+"|"+entry.name);
-                        html+="<tr>"
+                        html+="<tr style='" + (entry.p_kid>0 ? "background-color: #FFE5B5;" : "") + "'>"
                             +"	<td><input type=\"checkbox\" value=\"" + entry.id + "#" + entry.kid + "\" name=\"strChk[]\">";
                         <?php if(!isset($_REQUEST["sstate12"])) {?>
                         if($("input[name=editA]").val() == "1") {

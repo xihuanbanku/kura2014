@@ -406,10 +406,20 @@ function uploadFile($file, $filetempname) {
                             echo mysql_error();
                         }
 
+                        //根据子商品kid 更新父商品kid数量也做相应的package_size加减
+                        if(trim($number) < 0) {
+                            $notesql="update `#@__mainkc` set ".
+                                "`number` = `number` + ".trim($number)." * ".trim($strs[$colHead["PACKAGE_SIZE"]]).",".
+                                " `dtime` = now()".
+                                " where kid = (select * from (select p_kid from `#@__mainkc` where kid = '".trim($strs[$colHead["KID"]])."') t1)";
+                            $b2 = $nsql->ExecuteNoneQuery($notesql);
+                            echo mysql_error();
+                        }
+
                         // 根据packe_size计算子类的数量
                         if(trim($strs[$colHead["P_KID"]])) {
                             $notesql="update `#@__mainkc` set ".
-                                "`number` = (select * from (select `number` / ".trim($strs[$colHead["PACKAGE_SIZE"]]). " from `#@__mainkc` where kid = '".trim($strs[$colHead["P_KID"]])."') t1),".
+                                "`number` = (select * from (select floor(`number` / ".trim($strs[$colHead["PACKAGE_SIZE"]]). ") from `#@__mainkc` where kid = '".trim($strs[$colHead["P_KID"]])."') t1),".
                                 " `dtime` = now()".
                                 " where kid = '".trim($strs[$colHead["KID"]])."'";
                             $b2 = $nsql->ExecuteNoneQuery($notesql);
