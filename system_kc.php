@@ -94,7 +94,7 @@ $(function(){
             		var html = "<span><a href='javascript:void(0)' onclick='sort(1," + (entryIndex+11) + ")'>" + entry.p_value + "</a></span>" + 
             	    "<input style=\"display: none;\" name=\"p_value\" type=\"text\" value=\"" + entry.p_value + "\"/>" + 
             	    "<input style=\"display: none;\" name=\"p_name\" type=\"text\" value=\"" + entry.p_name + "\"/>";
-        			$("#table_border tr:eq(0) th:eq("+(entryIndex+10) +")").html(html);
+        			$("#table_border tr:eq(0) th:eq("+(entryIndex+11) +")").html(html);
         		}
     		});
 		    $("#table_border tr:eq(0) th:gt(7):lt(12) span").each(function(i, item){
@@ -438,7 +438,8 @@ function initPage(pageIndex) {
                             +"  <td><input type=\"hidden\" value=\"" + entry.l_id + "\"/><b>" + entry.l_name + "</b></td>"
                             +"  <td>" + entry.l_floor + "-" + entry.l_shelf + "-" + entry.l_zone + "-" + entry.l_horizontal + "-" + entry.l_vertical + "</td>"
                             +"	<td align=\"right\"><font color=\"blue\">￥" + entry.cp_sale1 + "</font></td>"
-                            +"  <td align=\"right\" style='color: blue;" + (entry.number<10 ? "background-color: #FF4C33;" : "background-color: #93FF33;") + "'>" + entry.number + "</td>"
+                            +"  " + (entry.p_kid>0 ? "<td></td>" : "<td align=\"right\" style='color: blue;" + (entry.number<10 ? "background-color: #FF4C33;" : "background-color: #93FF33;") + "'>" + entry.number + "</td>")
+                            +"  " + (entry.p_kid>0 ? "<td align=\"right\" style='color: blue;" + (entry.number<10 ? "background-color: #FF4C33;" : "background-color: #93FF33;") + "'>" + entry.number + "</td>" : "<td></td>")
                             +"  <td align=\"right\" style='color: blue;" + (entry.v_number<10 ? "background-color: #FF4C33;" : "background-color: #93FF33;") +"'>" + entry.v_number + "</td>"
                             +"  <td align=\"right\" style='color: blue;" + ((parseInt(entry.number) +parseInt(entry.v_number))<10 ? "background-color: #FF4C33;" : "background-color: #93FF33;") +"'>" + (parseInt(entry.number) +parseInt(entry.v_number)) + "</td>"
                             +"  <td>" + entry.s_name1 + "</td>"
@@ -469,7 +470,7 @@ function initPage(pageIndex) {
                         $("#table_border tr").find("td:gt(9):lt(10)").hide();
                     } else {
                         $("#table_border th:gt(19):lt(2)").hide();
-                        $("#table_border tr").find("td:gt(21):lt(2)").hide();
+                        $("#table_border tr").find("td:gt(22):lt(2)").hide();
                     }
 
                     //如果是从"快速入库"跳转过来的,为tr绑定双击关闭事件
@@ -796,6 +797,9 @@ function chkAll(param) {
                             <a href="javascript:void(0);" onclick="sort(this, 3);">在庫数</a>
                         </th>
                         <th width="3%">
+                            <a href="javascript:void(0);" onclick="sort(this, 3);">组合虚拟数</a>
+                        </th>
+                        <th width="3%">
                             <a href="javascript:void(0);" onclick="sort(this, 37);">仮想数</a>
                         </th>
                         <th width="3%">
@@ -981,6 +985,7 @@ function chkAll(param) {
             <tr>
                 <td><label><input type="checkbox" name="columns[]" value="60"/>父级关联K_ID</label></td>
                 <td><label><input type="checkbox" name="columns[]" value="61"/>组合系数</label></td>
+                <td><label><input type="checkbox" name="columns[]" value="62"/>组合虚拟数</label></td>
             </tr>
         </table>
       <button onclick="out_excel('export')">导出</button>

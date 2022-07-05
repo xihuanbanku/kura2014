@@ -1182,7 +1182,7 @@ define("PAGE_COUNT", 500);
                     "BULLET4","BULLET5","BULLET6","CATOGRY","DW","TYPE","PRICE1","PRICE2","PRICE3","PRICE4","S_DATE","E_DATE","JJ","URL","URL1",
                     "URL2","URL3","URL4","BROWSE1","BROWSE2","KEYWORD1","KEYWORD2","KEYWORD3","KEYWORD4","KEYWORD5","KEYWORD6","KEYWORD7",
                     "KEYWORD8","KEYWORD9","KEYWORD10","KID","L_ID","POSITION","NUMBER",
-                    "STATE1","STATE2","STATE3","STATE4","STATE5","STATE6","STATE7","STATE8","STATE9","STATE10","NOTE","BZ","ASIN","V_NUMBER","TOTAL_NUMBER","P_KID","PACKAGE_SIZE");
+                    "STATE1","STATE2","STATE3","STATE4","STATE5","STATE6","STATE7","STATE8","STATE9","STATE10","NOTE","BZ","ASIN","V_NUMBER","TOTAL_NUMBER","P_KID","PACKAGE_SIZE","NUMBER2");
                 for ($i=0;$i<count($array); $i++) {
 					if($columnsArray[$i]){
 						$csv_data .= $array[$i].TAB;
@@ -1194,7 +1194,7 @@ define("PAGE_COUNT", 500);
 							"メーカー希望小売価格","メーカー希望卸売価格","販売価格","生産日付","廃棄日付","仕入先","メインURL"," サブURL1","サブURL2","サブURL3","サブURL4",
 							"推奨ブラウズノード1","推奨ブラウズノード2","キーワード1","キーワード2","キーワード3","キーワード4","キーワード5","キーワード6",
                             "キーワード7","キーワード8","キーワード9","キーワード10","mainkc_id","倉庫号","在庫位置","在庫数",
-                            "状態1","状態2","状態3","状態4","状態5","状態6","状態7","状態8","状態9","状態10","注釈","備考","ASIN","仮想数","更新用在庫","父级关联KC_ID","组合系数");
+                            "状態1","状態2","状態3","状態4","状態5","状態6","状態7","状態8","状態9","状態10","注釈","備考","ASIN","仮想数","更新用在庫","父级关联KC_ID","组合系数","组合虚拟数");
                 for ($i=0;$i<count($array); $i++) {
 					if($columnsArray[$i]){
 						$csv_data .= iconv("utf-8", "Shift_jis", $array[$i]).TAB;
@@ -1339,7 +1339,7 @@ define("PAGE_COUNT", 500);
                                 $csv_data .= '"'.$bean['gc_pos'].'"'.TAB;
                             }
                             if($columnsArray[$index++]) {
-                                $csv_data .= '"'.$bean['gc_number'].'"'.TAB;
+                                $csv_data .= ($bean['gc_p_kid'] > 0 ? '' : '"'.$bean['gc_number'].'"').TAB;
                             }
                             if($columnsArray[$index++]) {
                                 $csv_data .= '"'.$bean['gc_l_state1'].'"'.TAB;
@@ -1393,6 +1393,9 @@ define("PAGE_COUNT", 500);
                             }
                             if($columnsArray[$index++]) {
                                 $csv_data .= '"'.$bean['gc_package_size'].'"'.TAB;
+                            }
+                            if($columnsArray[$index++]) {
+                                $csv_data .= ($bean['gc_p_kid'] > 0 ? '"'.$bean['gc_number'].'"' : '').TAB;
                             }
                             $csv_data .= "\n";
                             $index =0;

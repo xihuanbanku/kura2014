@@ -393,6 +393,9 @@ function uploadFile($file, $filetempname) {
                         } else {
                             $notesql .= " where `l_id` = '".trim($strs[$colHead["L_ID"]])."' and  p_id = '".trim($strs[$colHead["P_CODE"]])."'";
                         }
+                        if(trim($number) > 0) {
+                            $notesql .= " and p_kid <= 0";
+                        }
                         $b2 = $nsql->ExecuteNoneQuery($notesql);
                         echo mysql_error();
                         
@@ -409,7 +412,7 @@ function uploadFile($file, $filetempname) {
                         //根据子商品kid 更新父商品kid数量也做相应的package_size加减
                         if(trim($number) < 0) {
                             $notesql="update `#@__mainkc` set ".
-                                "`number` = `number` + ".trim($number)." * ".trim($strs[$colHead["PACKAGE_SIZE"]]).",".
+                                "`number` = `number` + (select * from (select ".trim($number)." * package_size from `#@__mainkc` where kid = ".trim($strs[$colHead["KID"]]).") t1),".
                                 " `dtime` = now()".
                                 " where kid = (select * from (select p_kid from `#@__mainkc` where kid = '".trim($strs[$colHead["KID"]])."') t1)";
                             $b2 = $nsql->ExecuteNoneQuery($notesql);
@@ -419,7 +422,7 @@ function uploadFile($file, $filetempname) {
                         // 根据packe_size计算子类的数量
                         if(trim($strs[$colHead["P_KID"]])) {
                             $notesql="update `#@__mainkc` set ".
-                                "`number` = (select * from (select floor(`number` / ".trim($strs[$colHead["PACKAGE_SIZE"]]). ") from `#@__mainkc` where kid = '".trim($strs[$colHead["P_KID"]])."') t1),".
+                                "`number` = floor((select * from (select `number` from `#@__mainkc` where kid = '".trim($strs[$colHead["P_KID"]])."') t1) / package_size),".
                                 " `dtime` = now()".
                                 " where kid = '".trim($strs[$colHead["KID"]])."'";
                             $b2 = $nsql->ExecuteNoneQuery($notesql);
