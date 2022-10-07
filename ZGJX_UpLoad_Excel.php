@@ -400,7 +400,7 @@ function uploadFile($file, $filetempname) {
                         echo mysql_error();
                         
                         //根据子商品id 更新父商品数量也做相应的加减
-                        if(trim($number) < 0) {
+                        if(trim($number) != 0) {
                             $notesql="update `#@__mainkc` set ".
                                 "`number` = `number` + ".trim($number).",".
                                 " `dtime` = now()".
@@ -410,7 +410,7 @@ function uploadFile($file, $filetempname) {
                         }
 
                         //根据子商品kid 更新父商品kid数量也做相应的package_size加减
-                        if(trim($number) < 0) {
+                        if(trim($number) != 0) {
                             $notesql="update `#@__mainkc` set ".
                                 "`number` = `number` + (select * from (select ".trim($number)." * package_size from `#@__mainkc` where kid = ".trim($strs[$colHead["KID"]]).") t1),".
                                 " `dtime` = now()".
@@ -419,15 +419,21 @@ function uploadFile($file, $filetempname) {
                             echo mysql_error();
                         }
 
-                        // 根据packe_size计算子类的数量
-                        if(trim($strs[$colHead["P_KID"]])) {
-                            $notesql="update `#@__mainkc` set ".
-                                "`number` = floor((select * from (select `number` from `#@__mainkc` where kid = '".trim($strs[$colHead["P_KID"]])."') t1) / package_size),".
-                                " `dtime` = now()".
-                                " where kid = '".trim($strs[$colHead["KID"]])."'";
-                            $b2 = $nsql->ExecuteNoneQuery($notesql);
-                            echo mysql_error();
-                        }
+                        // 如果是父KID, 根据packe_size计算子类的数量
+                        $notesql="update `#@__mainkc` set ".
+                            "`number` = floor((select * from (select `number` from `#@__mainkc` where kid = ".trim($strs[$colHead["KID"]]).") t1) / package_size),".
+                            " `dtime` = now()".
+                            " where p_kid = '".trim($strs[$colHead["KID"]])."'";
+                        $b2 = $nsql->ExecuteNoneQuery($notesql);
+                        // 如果是子KID, 反查父kid数量, 根据packe_size计算子类的数量
+                        $notesql="update `#@__mainkc` set ".
+                            "`number` = case when (select * from(select p_kid from `jxc_mainkc` where kid = 57496 and p_id > 0) t2)!= null ".
+                            " then floor((select * from (select `number` from `#@__mainkc` where kid = (select p_kid from `#@__mainkc` where kid = ".trim($strs[$colHead["KID"]]).")) t1) / package_size)".
+                            " else number end,".
+                            " `dtime` = now()".
+                            " where kid = '".trim($strs[$colHead["KID"]])."'";
+                        $b2 = $nsql->ExecuteNoneQuery($notesql);
+                        echo mysql_error();
 
                         $index=0;
 					    //根据操作类型更新s_type, 0=正常贩卖报告,1=amazon
