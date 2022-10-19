@@ -420,20 +420,24 @@ function uploadFile($file, $filetempname) {
                         }
 
                         // 如果是父KID, 根据packe_size计算子类的数量
-                        $notesql="update `#@__mainkc` set ".
-                            "`number` = floor((select * from (select `number` from `#@__mainkc` where kid = ".trim($strs[$colHead["KID"]]).") t1) / package_size),".
-                            " `dtime` = now()".
-                            " where p_kid = '".trim($strs[$colHead["KID"]])."'";
-                        $b2 = $nsql->ExecuteNoneQuery($notesql);
+                        if(trim($strs[$colHead["KID"]])) {
+							$notesql="update `#@__mainkc` set ".
+								"`number` = floor((select * from (select `number` from `#@__mainkc` where kid = ".trim($strs[$colHead["KID"]]).") t1) / package_size),".
+								" `dtime` = now()".
+								" where p_kid = '".trim($strs[$colHead["KID"]])."'";
+							$b2 = $nsql->ExecuteNoneQuery($notesql);
+						}
                         // 如果是子KID, 反查父kid数量, 根据packe_size计算子类的数量
-                        $notesql="update `#@__mainkc` set ".
-                            "`number` = case when (select * from(select p_kid from `jxc_mainkc` where kid = 57496 and p_id > 0) t2)!= null ".
-                            " then floor((select * from (select `number` from `#@__mainkc` where kid = (select p_kid from `#@__mainkc` where kid = ".trim($strs[$colHead["KID"]]).")) t1) / package_size)".
-                            " else number end,".
-                            " `dtime` = now()".
-                            " where kid = '".trim($strs[$colHead["KID"]])."'";
-                        $b2 = $nsql->ExecuteNoneQuery($notesql);
-                        echo mysql_error();
+                        if(trim($strs[$colHead["KID"]])) {
+							$notesql="update `#@__mainkc` set ".
+								"`number` = case when (select * from(select p_kid from `jxc_mainkc` where kid = 57496 and p_id > 0) t2)!= null ".
+								" then floor((select * from (select `number` from `#@__mainkc` where kid = (select p_kid from `#@__mainkc` where kid = ".trim($strs[$colHead["KID"]]).")) t1) / package_size)".
+								" else number end,".
+								" `dtime` = now()".
+								" where kid = '".trim($strs[$colHead["KID"]])."'";
+							$b2 = $nsql->ExecuteNoneQuery($notesql);
+							echo mysql_error();
+						}
 
                         $index=0;
 					    //根据操作类型更新s_type, 0=正常贩卖报告,1=amazon
