@@ -287,7 +287,7 @@ function uploadFile($file, $filetempname) {
                             break 2;
                         }
                     }
-                    if(trim($strs[$colHead["P_KID"]])) {
+                    if(trim($strs[$colHead["P_KID"]])>0) {
                         $res = $nsql->ExecuteNoneQuery("select `number` from #@__mainkc where kid = '" . trim($strs[$colHead["P_KID"]]) . "'") or die(mysql_errno());
                         if (!mysql_fetch_array($res)) {
                             $nsql->rollback();
@@ -383,7 +383,7 @@ function uploadFile($file, $filetempname) {
 
                         $notesql .= "`number` = `number` + ".(trim($number) == "" ? 0 : trim($number)).",".
                             "`v_number` = (case when `number` + ".(trim($number) == "" ? 0 : trim($number)) ." <= 0 then 0 else `v_number` + ".(trim($v_number) == "" ? 0 : trim($v_number))." end),";
-                        if(trim($strs[$colHead["P_KID"]])) {
+                        if(is_numeric($strs[$colHead["P_KID"]]) && trim($strs[$colHead["P_KID"]])>=0) {
                             $notesql .= " p_kid = " . trim($strs[$colHead["P_KID"]]) . "," .
                             " package_size = " . trim($strs[$colHead["PACKAGE_SIZE"]]) . ",";
                         }

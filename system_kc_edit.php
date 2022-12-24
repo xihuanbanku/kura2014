@@ -120,7 +120,7 @@ if ($action == 'save'){
             exit();
         } else {
             $bsql->executenonequery("update #@__mainkc set number='$kc_number',v_number='$v_number',l_floor='$kc_floor',"
-                . "l_shelf='$kc_shelf',l_zone='$kc_zone',l_horizontal='$kc_horizontal',l_vertical='$kc_vertical' where kid='" . $id . "'");
+                . "l_shelf='$kc_shelf',l_zone='$kc_zone',l_horizontal='$kc_horizontal',l_vertical='$kc_vertical',p_kid='$p_kid',package_size='$package_size' where kid='" . $id . "'");
             // 更新子类数量
             $bsql->executenonequery("update #@__mainkc set number='$kc_number' / package_size where p_kid='" . $id . "'");
             $loginip = getip();
