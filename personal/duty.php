@@ -230,6 +230,7 @@ if ($_FILES['inputExcelBuy']['size'] >0) {
 								<option value="2021">2021</option>
 								<option value="2022">2022</option>
 								<option value="2023">2023</option>
+								<option value="2024">2024</option>
 							</select>年
 							<select name="dutyMonth">
 								<option value="01">01</option>
