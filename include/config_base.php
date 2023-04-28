@@ -1,4 +1,4 @@
-<?php 
+﻿<?php 
 error_reporting(E_ALL || ~E_NOTICE);
 
 define('VIOOMAINC',dirname(__FILE__));
@@ -14,17 +14,17 @@ foreach($ckvs4 as $_k=>$_v){
 	}
 }
 foreach($ckvs as $ckv){
-   foreach($$ckv AS $_k => $_v){ 
-      if(preg_match("^(_|globals|cfg_)",$_k)) unset(${$ckv}[$_k]);
+   foreach($$ckv AS $_k => $_v){
+       if(preg_match("^(_|globals|cfg_)",$_k)) unset(${$ckv}[$_k]);
    }
 }
 
 require_once(VIOOMAINC."/config_hand.php");
 
-// if(PHP_VERSION > '5.1') {
-// 	$time51 = 'Etc/GMT'.($cfg_cli_time > 0 ? '+' : '-').abs($cfg_cli_time);
-// 	function_exists('date_default_timezone_set') ? @date_default_timezone_set($time51) : '';
-// }
+if(PHP_VERSION > '5.1') {
+	$time51 = 'Etc/GMT'.($cfg_cli_time > 0 ? '+' : '-').abs($cfg_cli_time);
+	function_exists('date_default_timezone_set') ? @date_default_timezone_set($time51) : '';
+}
 
 
 $sessSavePath = VIOOMAINC."/../data/sessions/";
@@ -35,16 +35,16 @@ $cfg_dbname = 'pmon_kura';
 $cfg_dbuser = 'pmon_test';
 $cfg_dbpwd = 'erise2013';
 $cfg_dbprefix = 'jxc_';
-$cfg_db_language = 'SJIS';
+$cfg_db_language = 'utf8';
 
 $cfg_softname = "Web在庫管理システム";
 $cfg_soft_enname = "2013版";
 $cfg_soft_devteam = "イーライズ";
 $cfg_version = 'v2013';
-$cfg_ver_lang = 'Shift-JIS';
+$cfg_ver_lang = 'utf-8';
 
 require_once(VIOOMAINC.'/config_passport.php');
 require_once(VIOOMAINC.'/config.php');
-if(!$__ONLYCONFIG) include_once(VIOOMAINC.'/pub_db_mysql.php');
-if(!$__ONLYDB) include_once(VIOOMAINC.'/inc_functions.php');
+if(!$__ONLYCONFIG) require_once(VIOOMAINC.'/pub_db_mysql.php');
+if(!$__ONLYDB) require_once(VIOOMAINC.'/inc_functions.php');
 ?>
